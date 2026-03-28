@@ -354,7 +354,7 @@ export default function ResultsDisplay({
               </a>
             )}
             <div>
-              <Link href="/" className={styles.ctaSecondary}>
+              <Link href="/intake" className={styles.ctaSecondary}>
                 ← Start over
               </Link>
             </div>
@@ -364,7 +364,7 @@ export default function ResultsDisplay({
 
       <footer className={styles.pageFooter}>
         <div className={styles.footerBrandRow}>
-          <BrandWordmark href="/" size="compact" />
+          <BrandWordmark size="compact" />
         </div>
         <p>90-day roadmap tool · © {new Date().getFullYear()} Darling MarTech</p>
       </footer>

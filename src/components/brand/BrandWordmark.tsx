@@ -8,7 +8,7 @@ type BrandWordmarkProps = {
 };
 
 export default function BrandWordmark({
-  href = '/',
+  href = '/intake',
   size = 'default',
   className,
 }: BrandWordmarkProps) {
