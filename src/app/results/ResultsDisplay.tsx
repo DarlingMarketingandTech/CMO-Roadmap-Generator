@@ -6,9 +6,11 @@ import type { IndustrySegment, Roadmap } from '@/lib/types';
 import { getClientBookingPrimaryHref } from '@/lib/booking-url';
 import { encodeIntakeAnswersCompact } from '@/lib/encode-answers';
 import { buildMailtoHref } from '@/lib/rules';
+import BrandWordmark from '@/components/brand/BrandWordmark';
+import { springEntrance } from '@/lib/motion';
 import ResultsLeadForm from './ResultsLeadForm';
 import ResultsToolbar from './ResultsToolbar';
-import * as styles from './page.css';
+import styles from './page.module.css';
 
 interface ResultsDisplayProps {
   roadmap: Roadmap;
@@ -20,6 +22,18 @@ const PHASE_LABELS: Record<number, string> = {
   1: 'Phase 1',
   2: 'Phase 2',
   3: 'Phase 3',
+};
+
+const PHASE_HEADER_CLASS: Record<1 | 2 | 3, string> = {
+  1: styles.phaseHeader1,
+  2: styles.phaseHeader2,
+  3: styles.phaseHeader3,
+};
+
+const EFFORT_CLASS: Record<'low' | 'medium' | 'high', string> = {
+  low: styles.effortLow,
+  medium: styles.effortMedium,
+  high: styles.effortHigh,
 };
 
 const SEGMENT_COPY: Record<IndustrySegment, string> = {
@@ -71,9 +85,9 @@ export default function ResultsDisplay({
       <header className={styles.pageHeader}>
         <motion.div
           className={styles.headerInner}
-          initial={{ opacity: 0, y: 30 }}
+          initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7, ease: 'easeOut' as const }}
+          transition={springEntrance}
         >
           <span className={styles.headerEyebrow}>Strategic briefing</span>
           <h1 className={styles.headerTitle}>Your 90-Day Marketing Roadmap</h1>
@@ -94,7 +108,7 @@ export default function ResultsDisplay({
             className={styles.executiveBriefing}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.04 }}
+            transition={{ ...springEntrance, delay: 0.04 }}
           >
             <div className={styles.executiveLabel}>Executive summary</div>
             <h2 className={styles.executiveTitle}>What to do first — and why</h2>
@@ -108,7 +122,7 @@ export default function ResultsDisplay({
             className={styles.businessSummary}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.55, delay: 0.08 }}
+            transition={{ ...springEntrance, delay: 0.08 }}
           >
             <div className={styles.businessSummaryHeadline}>{businessSummary.headline}</div>
             <div className={styles.businessSummaryGrid}>
@@ -125,11 +139,11 @@ export default function ResultsDisplay({
             className={styles.prioritiesSection}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            transition={{ ...springEntrance, delay: 0.1 }}
           >
             <span className={styles.sectionTag}>Immediate focus</span>
             <h2 className={styles.sectionTitle}>Top 3 priorities (next 30 days)</h2>
-            <p className={styles.leadIntro} style={{ marginBottom: '24px' }}>
+            <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>
               These are the highest-scored initiatives for your profile — execute in order before
               expanding scope.
             </p>
@@ -147,7 +161,7 @@ export default function ResultsDisplay({
             className={styles.phasesSection}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.14 }}
+            transition={{ ...springEntrance, delay: 0.14 }}
           >
             <span className={styles.sectionTag}>Roadmap</span>
             <h2 className={styles.sectionTitle}>90-day execution by phase</h2>
@@ -155,7 +169,7 @@ export default function ResultsDisplay({
             <div className={styles.phasesTimeline}>
               {phases.map((phase) => (
                 <div key={phase.phase} className={styles.phaseBlock}>
-                  <div className={styles.phaseHeader[phase.phase]}>
+                  <div className={PHASE_HEADER_CLASS[phase.phase as 1 | 2 | 3]}>
                     <div>
                       <div className={styles.phaseLabel}>{PHASE_LABELS[phase.phase]}</div>
                       <div className={styles.phaseName}>{phase.title}</div>
@@ -170,7 +184,7 @@ export default function ResultsDisplay({
                           <div className={styles.moduleTitle}>{mod.title}</div>
                           <div className={styles.moduleMeta}>
                             <span className={styles.moduleWeek}>{mod.week}</span>
-                            <span className={styles.effortBadge[mod.effort]}>
+                            <span className={EFFORT_CLASS[mod.effort]}>
                               {mod.effort.charAt(0).toUpperCase() + mod.effort.slice(1)} effort
                             </span>
                           </div>
@@ -197,11 +211,11 @@ export default function ResultsDisplay({
             className={styles.explainSection}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.18 }}
+            transition={{ ...springEntrance, delay: 0.18 }}
           >
             <span className={styles.sectionTag}>Why this roadmap</span>
             <h2 className={styles.sectionTitle}>Logic behind your plan</h2>
-            <p className={styles.leadIntro} style={{ marginBottom: '28px', maxWidth: '720px' }}>
+            <p className={`${styles.leadIntro} ${styles.leadIntroWide}`}>
               Transparent mapping from your answers to flags, scores, and sequencing — so you can
               defend this internally or with an agency partner.
             </p>
@@ -250,7 +264,7 @@ export default function ResultsDisplay({
             className={styles.whySection}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.22 }}
+            transition={{ ...springEntrance, delay: 0.22 }}
           >
             <div className={styles.whyTitle}>Narrative read</div>
             <p className={styles.whyText}>{whyThisRoadmap}</p>
@@ -267,11 +281,11 @@ export default function ResultsDisplay({
             className={styles.servicesSection}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.26 }}
+            transition={{ ...springEntrance, delay: 0.26 }}
           >
             <span className={styles.sectionTag}>Commercial path</span>
             <h2 className={styles.sectionTitle}>Recommended service path</h2>
-            <p className={styles.leadIntro} style={{ marginBottom: '24px', maxWidth: '680px' }}>
+            <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>
               Primary and supporting services follow your scores and vertical lens — tuned for how
               buyers evaluate and convert in your category.
             </p>
@@ -305,7 +319,7 @@ export default function ResultsDisplay({
             className={styles.watchOutsSection}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.3 }}
+            transition={{ ...springEntrance, delay: 0.3 }}
           >
             <h2 className={styles.watchOutsTitle}>Watch-outs & common mistakes</h2>
             <ul className={styles.watchOutsList}>
@@ -323,7 +337,7 @@ export default function ResultsDisplay({
             className={`${styles.ctaSection} ${styles.hideOnPrint}`}
             initial={{ opacity: 0, y: 24 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.34 }}
+            transition={{ ...springEntrance, delay: 0.34 }}
           >
             <div className={styles.ctaTitle}>{primaryCta.headline}</div>
             <p className={styles.ctaDesc}>
@@ -349,7 +363,10 @@ export default function ResultsDisplay({
       </div>
 
       <footer className={styles.pageFooter}>
-        <p>CMO Roadmap Generator · © {new Date().getFullYear()}</p>
+        <div className={styles.footerBrandRow}>
+          <BrandWordmark href="/" size="compact" />
+        </div>
+        <p>90-day roadmap tool · © {new Date().getFullYear()} Darling MarTech</p>
       </footer>
     </div>
   );

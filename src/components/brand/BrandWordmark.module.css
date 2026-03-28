@@ -1,0 +1,28 @@
+.wordmark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 0.28em;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1rem;
+  letter-spacing: -0.03em;
+  line-height: 1;
+  text-decoration: none;
+  color: inherit;
+}
+
+.darling {
+  color: var(--color-text);
+}
+
+.martech {
+  color: var(--color-accent);
+}
+
+.compact {
+  font-size: 0.875rem;
+}
+
+.large {
+  font-size: 1.125rem;
+}

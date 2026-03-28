@@ -13,10 +13,12 @@ import {
 } from '@react-email/components';
 import type { RoadmapEmailModel } from '@/lib/email/roadmap-email-model';
 
-const brand = '#0A0F1E';
-const accent = '#C9A96E';
-const muted = '#4A5568';
-const border = '#E8E4DF';
+const base = '#0A0A0A';
+const surface = '#141414';
+const text = '#F5F0E8';
+const accent = '#FF4D00';
+const muted = '#888888';
+const border = 'rgba(245, 240, 232, 0.12)';
 
 export interface RoadmapEmailProps extends RoadmapEmailModel {
   strategyCtaUrl: string;
@@ -43,7 +45,11 @@ export default function RoadmapEmail({
       <Body style={main}>
         <Container style={container}>
           <Section style={header}>
-            <Text style={eyebrow}>CMO Roadmap Generator</Text>
+            <Text style={eyebrow}>
+              <span style={{ color: text }}>Darling </span>
+              <span style={{ color: accent }}>MarTech</span>
+              <span style={{ color: muted }}> · Roadmap</span>
+            </Text>
             <Heading as="h1" style={h1}>
               Your 90-day marketing roadmap
             </Heading>
@@ -66,7 +72,7 @@ export default function RoadmapEmail({
           <Section style={listBox}>
             {topPriorities.map((p, i) => (
               <Text key={p} style={listItem}>
-                <strong style={{ color: brand }}>{i + 1}.</strong> {p}
+                <strong style={{ color: accent }}>{i + 1}.</strong> {p}
               </Text>
             ))}
           </Section>
@@ -77,7 +83,7 @@ export default function RoadmapEmail({
           {phases.map((phase) => (
             <Section key={phase.phaseLabel} style={phaseBlock}>
               <Text style={phaseTitle}>
-                <strong style={{ color: brand }}>
+                <strong style={{ color: text }}>
                   {phase.phaseLabel}: {phase.phaseTitle}
                 </strong>{' '}
                 <span style={{ color: muted, fontWeight: 400 }}>({phase.days})</span>
@@ -140,9 +146,9 @@ export default function RoadmapEmail({
 }
 
 const main = {
-  backgroundColor: '#F4F2EE',
+  backgroundColor: base,
   fontFamily:
-    '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
+    'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
 };
 
 const container = {
@@ -156,33 +162,31 @@ const header = {
 };
 
 const eyebrow = {
-  fontSize: '11px',
-  fontWeight: 600,
-  letterSpacing: '0.14em',
-  textTransform: 'uppercase' as const,
-  color: accent,
-  margin: '0 0 8px',
+  fontSize: '12px',
+  fontWeight: 800,
+  letterSpacing: '-0.02em',
+  margin: '0 0 12px',
 };
 
 const h1 = {
-  color: brand,
+  color: text,
   fontSize: '26px',
-  fontWeight: 700,
-  lineHeight: '1.2',
+  fontWeight: 800,
+  lineHeight: '1.15',
   margin: '0',
-  fontFamily: 'Georgia, "Times New Roman", serif',
+  letterSpacing: '-0.02em',
 };
 
 const h2 = {
-  color: brand,
+  color: text,
   fontSize: '17px',
-  fontWeight: 700,
+  fontWeight: 800,
   margin: '28px 0 12px',
-  fontFamily: 'Georgia, "Times New Roman", serif',
+  letterSpacing: '-0.02em',
 };
 
 const paragraph = {
-  color: brand,
+  color: text,
   fontSize: '15px',
   lineHeight: '1.6',
   margin: '0 0 16px',
@@ -196,30 +200,30 @@ const mutedParagraph = {
 };
 
 const listBox = {
-  backgroundColor: '#FFFFFF',
+  backgroundColor: surface,
   border: `1px solid ${border}`,
-  borderRadius: '8px',
+  borderRadius: '16px',
   padding: '16px 20px',
   marginBottom: '8px',
 };
 
 const listItem = {
-  color: brand,
+  color: text,
   fontSize: '14px',
   lineHeight: '1.5',
   margin: '0 0 8px',
 };
 
 const phaseBlock = {
-  backgroundColor: '#FFFFFF',
+  backgroundColor: surface,
   border: `1px solid ${border}`,
-  borderRadius: '8px',
+  borderRadius: '16px',
   padding: '14px 18px',
   marginBottom: '12px',
 };
 
 const phaseTitle = {
-  color: brand,
+  color: text,
   fontSize: '14px',
   margin: '0 0 8px',
 };
@@ -241,7 +245,7 @@ const label = {
 };
 
 const strongLine = {
-  color: brand,
+  color: text,
   fontSize: '15px',
   fontWeight: 600,
   margin: '0 0 6px',
@@ -258,7 +262,7 @@ const ctaBox = {
 };
 
 const ctaText = {
-  color: brand,
+  color: text,
   fontSize: '15px',
   margin: '0 0 8px',
 };
@@ -272,7 +276,7 @@ const ctaSubline = {
 
 const button = {
   backgroundColor: accent,
-  color: brand,
+  color: base,
   fontSize: '15px',
   fontWeight: 700,
   textDecoration: 'none',

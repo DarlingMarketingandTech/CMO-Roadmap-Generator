@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { composeRoadmap } from '@/lib/compose-roadmap';
 import { parseIntakeAnswersFromResultsParams } from '@/lib/encode-answers';
 import ResultsDisplay from './ResultsDisplay';
-import * as styles from './page.css';
+import styles from './page.module.css';
 
 interface ResultsPageProps {
   searchParams: Promise<{ q?: string | string[]; answers?: string | string[] }>;
@@ -37,8 +37,8 @@ function ErrorState() {
       <div className={styles.errorTitle}>Something Went Wrong</div>
       <p className={styles.errorDesc}>
         We could not load your roadmap. Open a valid share link, use the compact{' '}
-        <code style={{ fontSize: '0.85em' }}>?q=</code> or legacy{' '}
-        <code style={{ fontSize: '0.85em' }}>?answers=</code> URL, or retake the assessment.
+        <code className={styles.inlineCode}>?q=</code> or legacy{' '}
+        <code className={styles.inlineCode}>?answers=</code> URL, or retake the assessment.
       </p>
       <Link href="/intake" className={styles.errorLink}>
         Take the Assessment →

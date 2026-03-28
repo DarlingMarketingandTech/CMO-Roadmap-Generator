@@ -3,7 +3,7 @@
 import { useCallback, useState } from 'react';
 import type { IntakeAnswers } from '@/lib/types';
 import { encodeIntakeAnswersCompact } from '@/lib/encode-answers';
-import * as styles from './page.css';
+import styles from './page.module.css';
 
 interface ResultsToolbarProps {
   answers: IntakeAnswers;

@@ -2,157 +2,185 @@
 
 import Link from 'next/link';
 import { motion } from 'motion/react';
+import BrandWordmark from '@/components/brand/BrandWordmark';
 import { DEMO_PROFILES, demoResultsHref } from '@/lib/demo-profiles';
-import * as styles from './page.css';
+import {
+  containerVariants,
+  itemVariants,
+  springEntrance,
+  springStandard,
+  viewportOnce,
+} from '@/lib/motion';
+import styles from './page.module.css';
 
 const STEPS = [
   {
     number: '1',
-    title: 'Answer 7 Questions',
+    title: 'Answer 7 questions',
     description:
-      'Tell us about your business type, stage, goals, and current marketing situation in under 3 minutes.',
+      'I map business type, stage, goals, and capacity in under three minutes — no account wall.',
   },
   {
     number: '2',
-    title: 'Get Your Personalized Roadmap',
+    title: 'Get a phased 90-day plan',
     description:
-      'The rules engine scores roadmap modules from your answers and assembles a phased 90-day plan — deterministic and explainable.',
+      'A rules engine scores modules from your answers and assembles phases — same inputs, same roadmap, every time.',
   },
   {
     number: '3',
-    title: 'Execute With Confidence',
+    title: 'Execute with clear priorities',
     description:
-      'Follow your phased plan with clear priorities, effort levels, expected outcomes, and service recommendations.',
+      'You leave with ordered work, effort signals, expected outcomes, and how I’d engage if you want hands-on help.',
   },
 ];
 
 const AUDIENCES = [
   {
     icon: '🏢',
-    title: 'SMB Owners',
+    title: 'SMB owners',
     description:
-      'Get a clear, prioritized marketing plan without hiring a full-time CMO. Know exactly what to focus on this quarter.',
+      'A prioritized quarter plan without a full-time CMO hire — you see what to ship first and what can wait.',
   },
   {
     icon: '📈',
-    title: 'Marketing Directors',
+    title: 'Marketing directors',
     description:
-      'Build a structured 90-day execution plan to align with leadership, justify budget, and show measurable progress.',
+      'A structured 90-day narrative for leadership: budget justification, sequencing, and proof of progress.',
   },
   {
     icon: '🚀',
-    title: 'Growth-Stage Companies',
+    title: 'Growth-stage teams',
     description:
-      "Scale your marketing systematically. Stop guessing and start following a plan that's built for your specific stage.",
+      'Systems thinking for scale — fewer random campaigns, more repeatable infrastructure tied to revenue.',
   },
 ];
 
 const DELIVERABLES = [
   '3-phase, 90-day marketing roadmap',
-  'Prioritized top 3 actions to take first',
-  'Primary and secondary service recommendations (Darling MarTech–aligned)',
-  'Recommended next-step engagement type',
-  '“Why this roadmap” narrative plus answer / flag / track transparency',
+  'Prioritized top 3 actions for the next 30 days',
+  'Primary and supporting service recommendations (Darling MarTech–aligned)',
+  'Recommended engagement shape and sprint / program',
+  '“Why this roadmap” narrative plus answer, flag, and track transparency',
   'Business summary snapshot for stakeholders',
   'Phase-by-phase module breakdown',
   'Expected outcomes per module',
-  'Effort level for each initiative',
+  'Effort level per initiative',
   'Save as PDF via print',
 ];
 
 export default function HomePage() {
   return (
     <div className={styles.page}>
-      {/* ─── HERO ─── */}
       <section className={styles.hero}>
-        <motion.div
-          className={styles.heroInner}
-          initial={{ opacity: 0, y: 40 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.75, ease: 'easeOut' as const }}
-        >
-          <span className={styles.heroEyebrow}>Free Marketing Strategy Tool</span>
-          <h1 className={styles.heroTitle}>
-            Build Your 90-Day
-            <br />
-            Marketing Roadmap
-          </h1>
-          <p className={styles.heroSubtitle}>
-            Answer 7 questions and get a personalized, phased marketing plan tailored to your
-            business stage, primary goal, and team capacity.
-          </p>
-          <Link href="/intake" className={styles.heroCta}>
-            Generate My Roadmap →
-          </Link>
+        <div className={styles.heroTopBar}>
+          <BrandWordmark size="large" />
+        </div>
 
-          <div className={styles.heroStats}>
-            <div className={styles.heroStat}>
-              <div className={styles.heroStatValue}>7</div>
-              <div className={styles.heroStatLabel}>Questions</div>
+        <div className={styles.heroGrid}>
+          <motion.div
+            className={styles.heroInner}
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={springEntrance}
+          >
+            <span className={styles.heroEyebrow}>Free tool · Darling MarTech</span>
+            <h1 className={styles.heroTitle}>Your next 90 days, mapped.</h1>
+            <p className={styles.heroAccentLine}>Built for operators who need clarity, not another slide deck.</p>
+            <p className={styles.heroSubtitle}>
+              I built this so you can translate where you are today into a phased plan — stage, goal,
+              bottleneck, and team capacity included.
+            </p>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/intake" className={styles.heroCta}>
+                Generate my roadmap →
+              </Link>
+            </motion.div>
+
+            <div className={styles.heroStats}>
+              <div className={styles.heroStat}>
+                <div className={styles.heroStatValue}>7</div>
+                <div className={styles.heroStatLabel}>Questions</div>
+              </div>
+              <div className={styles.heroStat}>
+                <div className={styles.heroStatValue}>~3</div>
+                <div className={styles.heroStatLabel}>Minutes</div>
+              </div>
+              <div className={styles.heroStat}>
+                <div className={styles.heroStatValue}>90</div>
+                <div className={styles.heroStatLabel}>Day horizon</div>
+              </div>
             </div>
-            <div className={styles.heroStat}>
-              <div className={styles.heroStatValue}>3</div>
-              <div className={styles.heroStatLabel}>Minutes</div>
-            </div>
-            <div className={styles.heroStat}>
-              <div className={styles.heroStatValue}>90</div>
-              <div className={styles.heroStatLabel}>Day Plan</div>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+
+          <motion.div
+            className={styles.heroVisual}
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ ...springStandard, delay: 0.08 }}
+            aria-hidden
+          >
+            <div className={styles.heroVisualFrame} />
+            <div className={styles.heroVisualAccent} />
+          </motion.div>
+        </div>
       </section>
 
-      {/* ─── HOW IT WORKS ─── */}
-      <section className={styles.sectionLight}>
-        <motion.div
-          className={styles.containerNarrow}
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6, ease: 'easeOut' as const }}
-        >
-          <span className={styles.sectionTag}>Simple Process</span>
-          <h2 className={styles.sectionTitle}>How It Works</h2>
-          <p className={styles.sectionDesc}>
-            A deterministic rules engine maps your answers to priorities and phases — same inputs,
-            same roadmap, every time. No black box.
-          </p>
-        </motion.div>
+      <section className={styles.section}>
         <div className={styles.container}>
-          <div className={styles.stepsGrid}>
-            {STEPS.map((step, i) => (
-              <motion.div
-                key={step.number}
-                className={styles.stepCard}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.12, ease: 'easeOut' as const }}
-              >
-                <div className={styles.stepNumber}>{step.number}</div>
-                <h3 className={styles.stepTitle}>{step.title}</h3>
-                <p className={styles.stepDescription}>{step.description}</p>
-              </motion.div>
-            ))}
+          <div className={styles.stepsLayout}>
+            <motion.div
+              className={styles.stepsIntro}
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={viewportOnce}
+              transition={springEntrance}
+            >
+              <span className={styles.sectionTag}>How it works</span>
+              <h2 className={styles.sectionTitle}>From intake to roadmap</h2>
+              <p className={styles.sectionDesc}>
+                No black box — you can see what drove the plan. I use this same rigor on client work;
+                the tool is the public slice.
+              </p>
+            </motion.div>
+
+            <motion.div
+              className={styles.stepsList}
+              variants={containerVariants}
+              initial="hidden"
+              whileInView="visible"
+              viewport={viewportOnce}
+            >
+              {STEPS.map((step) => (
+                <motion.article
+                  key={step.number}
+                  className={`card ${styles.stepCard}`}
+                  variants={itemVariants}
+                  whileHover={{ scale: 1.02 }}
+                >
+                  <div className={styles.stepNumber}>{step.number}</div>
+                  <h3 className={styles.stepTitle}>{step.title}</h3>
+                  <p className={styles.stepDescription}>{step.description}</p>
+                </motion.article>
+              ))}
+            </motion.div>
           </div>
         </div>
       </section>
 
-      {/* ─── WHO IT'S FOR ─── */}
-      <section className={styles.sectionDark}>
+      <section className={styles.section}>
         <div className={styles.container}>
           <motion.div
-            style={{ textAlign: 'center', marginBottom: '48px' }}
-            initial={{ opacity: 0, y: 30 }}
+            className={`${styles.sectionHeader} ${styles.sectionHeaderCenter}`}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            viewport={viewportOnce}
+            transition={springEntrance}
           >
-            <span className={styles.sectionTag}>Who It's For</span>
-            <h2 className={styles.sectionTitleLight}>Built for Business Leaders</h2>
-            <p className={styles.sectionDescLight}>
-              Whether you are a founder wearing every hat or a seasoned marketing director, this
-              tool delivers a roadmap calibrated to your reality.
+            <span className={styles.sectionTag}>Who it fits</span>
+            <h2 className={styles.sectionTitle}>If you own outcomes, this is for you</h2>
+            <p className={styles.sectionDesc}>
+              Founders, marketing leads, and growth teams use it the same way — to force rank what
+              matters before spend hits the channel.
             </p>
           </motion.div>
 
@@ -160,11 +188,12 @@ export default function HomePage() {
             {AUDIENCES.map((audience, i) => (
               <motion.div
                 key={audience.title}
-                className={styles.audienceCard}
-                initial={{ opacity: 0, y: 30 }}
+                className={`card ${styles.audienceCard} ${i === 2 ? styles.audienceCardWide : ''}`}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: i * 0.1 }}
+                viewport={viewportOnce}
+                transition={{ ...springEntrance, delay: i * 0.07 }}
+                whileHover={{ scale: 1.02 }}
               >
                 <div className={styles.audienceIcon}>{audience.icon}</div>
                 <h3 className={styles.audienceTitle}>{audience.title}</h3>
@@ -175,34 +204,33 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── DEMO PROFILES ─── */}
-      <section className={styles.sectionAlt}>
+      <section className={styles.section}>
         <div className={styles.container}>
           <motion.div
-            className={styles.containerNarrow}
-            initial={{ opacity: 0, y: 30 }}
+            className={styles.sectionHeader}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            viewport={viewportOnce}
+            transition={springEntrance}
           >
-            <span className={styles.sectionTag}>Try it instantly</span>
+            <span className={styles.sectionTag}>Try it now</span>
             <h2 className={styles.sectionTitle}>Sample profiles</h2>
             <p className={styles.sectionDesc}>
-              One click loads a full roadmap — no typing. Use them to demo the tool or regression-test
-              rule branches. You can also step through the wizard with the same data via “Walk through
-              intake.”
+              Open a full roadmap in one click — useful for demos or sanity-checking rule branches.
+              You can also replay the same data through the wizard.
             </p>
           </motion.div>
 
           <div className={styles.demoGrid}>
             {DEMO_PROFILES.map((profile, i) => (
-              <motion.div
+              <motion.article
                 key={profile.id}
-                className={styles.demoCard}
-                initial={{ opacity: 0, y: 24 }}
+                className={`card ${styles.demoCard}`}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.45, delay: i * 0.06 }}
+                viewport={viewportOnce}
+                transition={{ ...springEntrance, delay: i * 0.06 }}
+                whileHover={{ scale: 1.02 }}
               >
                 <h3 className={styles.demoCardTitle}>{profile.title}</h3>
                 <p className={styles.demoCardBlurb}>{profile.blurb}</p>
@@ -214,27 +242,26 @@ export default function HomePage() {
                     Walk through intake
                   </Link>
                 </div>
-              </motion.div>
+              </motion.article>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ─── WHAT YOU GET ─── */}
-      <section className={styles.sectionLight}>
+      <section className={styles.section}>
         <div className={styles.container}>
           <motion.div
-            className={styles.containerNarrow}
-            initial={{ opacity: 0, y: 30 }}
+            className={`${styles.sectionHeader} ${styles.sectionHeaderCenter}`}
+            initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
+            viewport={viewportOnce}
+            transition={springEntrance}
           >
-            <span className={styles.sectionTag}>Your deliverables</span>
-            <h2 className={styles.sectionTitle}>What you&apos;ll receive</h2>
+            <span className={styles.sectionTag}>Deliverables</span>
+            <h2 className={styles.sectionTitle}>What you get on the results page</h2>
             <p className={styles.sectionDesc}>
-              Every roadmap includes a complete set of strategic outputs you can start acting on
-              immediately.
+              Everything below is generated from your answers — built to share internally or forward
+              as a pre-call brief.
             </p>
           </motion.div>
 
@@ -242,11 +269,11 @@ export default function HomePage() {
             className={styles.deliverablesGrid}
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6, delay: 0.1 }}
+            viewport={viewportOnce}
+            transition={{ ...springEntrance, delay: 0.05 }}
           >
             {DELIVERABLES.map((item) => (
-              <div key={item} className={styles.deliverableItem}>
+              <div key={item} className={`card ${styles.deliverableItem}`}>
                 <div className={styles.deliverableCheck}>✓</div>
                 <span className={styles.deliverableText}>{item}</span>
               </div>
@@ -255,29 +282,34 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── FINAL CTA ─── */}
       <section className={styles.finalCta}>
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-        >
-          <h2 className={styles.finalCtaTitle}>Ready to Build Your Roadmap?</h2>
-          <p className={styles.finalCtaDesc}>
-            It takes less than 3 minutes. No email required. Get your personalized 90-day plan
-            instantly.
-          </p>
-          <Link href="/intake" className={styles.ctaButton}>
-            Generate My Roadmap →
-          </Link>
-        </motion.div>
+        <div className={styles.container}>
+          <motion.div
+            className={styles.finalCtaInner}
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={viewportOnce}
+            transition={springEntrance}
+          >
+            <h2 className={styles.finalCtaTitle}>Ready when you are</h2>
+            <p className={styles.finalCtaDesc}>
+              Under three minutes, no email gate for the on-page plan. If you want it in your inbox
+              afterward, that option is on the results screen.
+            </p>
+            <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
+              <Link href="/intake" className={styles.ctaButton}>
+                Generate my roadmap →
+              </Link>
+            </motion.div>
+          </motion.div>
+        </div>
       </section>
 
-      {/* ─── FOOTER ─── */}
       <footer className={styles.footer}>
-        <div className={styles.footerBrand}>CMO Roadmap Generator</div>
-        <p>© {new Date().getFullYear()} · Free strategic marketing planning tool</p>
+        <BrandWordmark href="/" size="compact" />
+        <p className={styles.footerTagline}>
+          © {new Date().getFullYear()} Jacob Darling · Darling MarTech — roadmap generator embed
+        </p>
       </footer>
     </div>
   );

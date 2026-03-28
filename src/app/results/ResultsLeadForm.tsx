@@ -4,7 +4,7 @@ import { useState, type FormEvent } from 'react';
 import type { Roadmap } from '@/lib/types';
 import { getClientBookingPrimaryHref } from '@/lib/booking-url';
 import { buildMailtoHref } from '@/lib/rules';
-import * as styles from './page.css';
+import styles from './page.module.css';
 
 type Intent = 'email-roadmap' | 'full-version' | 'book-call';
 

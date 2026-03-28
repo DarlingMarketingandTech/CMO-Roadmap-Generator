@@ -8,7 +8,8 @@ import { QUESTIONS } from '@/lib/questions';
 import type { IntakeAnswers } from '@/lib/types';
 import { getDemoProfileById } from '@/lib/demo-profiles';
 import { encodeIntakeAnswersCompact } from '@/lib/encode-answers';
-import * as styles from './page.css';
+import BrandWordmark from '@/components/brand/BrandWordmark';
+import styles from './page.module.css';
 
 const defaultAnswers: Partial<IntakeAnswers> = {
   activeChannels: [],
@@ -115,7 +116,7 @@ export default function IntakeForm() {
   return (
     <div className={styles.pageWrapper}>
       <header className={styles.header}>
-        <span className={styles.headerBrand}>CMO Roadmap Generator</span>
+        <BrandWordmark size="compact" />
         <span className={styles.headerStep}>
           {currentStep + 1} / {QUESTIONS.length}
         </span>
