@@ -430,3 +430,80 @@ export const footerBrand = style({
   marginBottom: vars.space['2'],
   fontWeight: vars.fontWeight.medium,
 });
+
+/* ─── DEMO PROFILES ─── */
+
+export const demoGrid = style({
+  display: 'grid',
+  gridTemplateColumns: 'repeat(2, 1fr)',
+  gap: vars.space['5'],
+  '@media': {
+    'screen and (max-width: 768px)': {
+      gridTemplateColumns: '1fr',
+    },
+  },
+});
+
+export const demoCard = style({
+  backgroundColor: vars.color.surfaceElevated,
+  border: `1px solid ${vars.color.border}`,
+  borderRadius: vars.radius.lg,
+  padding: vars.space['6'],
+  boxShadow: vars.shadow.sm,
+  display: 'flex',
+  flexDirection: 'column' as const,
+  gap: vars.space['3'],
+  transition: `box-shadow ${vars.transition.base}, border-color ${vars.transition.base}`,
+  ':hover': {
+    boxShadow: vars.shadow.md,
+    borderColor: vars.color.borderStrong,
+  },
+});
+
+export const demoCardTitle = style({
+  fontFamily: vars.font.serif,
+  fontSize: vars.fontSize.md,
+  fontWeight: vars.fontWeight.bold,
+  color: vars.color.text,
+  lineHeight: vars.lineHeight.snug,
+});
+
+export const demoCardBlurb = style({
+  fontSize: vars.fontSize.sm,
+  color: vars.color.textSecondary,
+  lineHeight: vars.lineHeight.relaxed,
+  flex: 1,
+});
+
+export const demoCardActions = style({
+  display: 'flex',
+  flexWrap: 'wrap' as const,
+  gap: vars.space['3'],
+  marginTop: vars.space['2'],
+});
+
+export const demoLinkPrimary = style({
+  fontSize: vars.fontSize.sm,
+  fontWeight: vars.fontWeight.bold,
+  color: vars.color.brand,
+  backgroundColor: vars.color.accent,
+  padding: `${vars.space['2']} ${vars.space['4']}`,
+  borderRadius: vars.radius.md,
+  transition: `background ${vars.transition.fast}`,
+  ':hover': {
+    backgroundColor: vars.color.accentLight,
+  },
+});
+
+export const demoLinkSecondary = style({
+  fontSize: vars.fontSize.sm,
+  fontWeight: vars.fontWeight.medium,
+  color: vars.color.textSecondary,
+  padding: `${vars.space['2']} ${vars.space['3']}`,
+  borderRadius: vars.radius.md,
+  border: `1px solid ${vars.color.border}`,
+  ':hover': {
+    color: vars.color.text,
+    borderColor: vars.color.borderStrong,
+  },
+});

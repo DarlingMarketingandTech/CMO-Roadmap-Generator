@@ -51,6 +51,15 @@ export type TeamCapacity =
   | 'dedicated-marketer'
   | 'full-team';
 
+/** Vertical lens derived from `businessType` (see `industry.ts`). */
+export type IndustrySegment =
+  | 'healthcare'
+  | 'legal'
+  | 'local'
+  | 'saas'
+  | 'ecommerce'
+  | 'general';
+
 export interface IntakeAnswers {
   businessType: BusinessType;
   businessStage: BusinessStage;
@@ -61,6 +70,10 @@ export interface IntakeAnswers {
   teamCapacity: TeamCapacity;
 }
 
+/**
+ * Derived booleans from raw answers. Used by scoring, services, and explainability.
+ * Add new flags here when new intake dimensions should drive the engine.
+ */
 export interface Flags {
   isPreLaunch: boolean;
   isFounderOnly: boolean;
@@ -72,6 +85,12 @@ export interface Flags {
   isLocalOrHealthcare: boolean;
   hasActiveChannels: boolean;
   isEarlyStage: boolean;
+  /** Poor on-site or funnel conversion (bottleneck). */
+  needsConversionLift: boolean;
+  /** E-commerce / DTC — used to weight conversion and lifecycle work. */
+  isEcommerce: boolean;
+  /** Bandwidth constraint — prioritize systems that reduce manual work. */
+  needsWorkflowRelief: boolean;
 }
 
 export interface RoadmapModule {
@@ -97,11 +116,79 @@ export interface ServiceRecommendation {
   isPrimary: boolean;
 }
 
+/** Suggested way to engage (fixed scope, audit, retainer, etc.). */
+export interface RecommendedEngagement {
+  title: string;
+  description: string;
+}
+
+export type EngagementFormatType = 'audit-advisory' | 'project-build' | 'embedded-fractional';
+
+/** High-level engagement shape (audit vs build vs embedded). */
+export interface EngagementFormatRecommendation {
+  format: EngagementFormatType;
+  title: string;
+  rationale: string;
+}
+
+/** Service-specific commercial CTA on the results page. */
+export interface PrimaryCta {
+  headline: string;
+  buttonLabel: string;
+  mailtoSubject: string;
+  mailtoBodyIntro: string;
+}
+
+export interface InfluentialAnswer {
+  questionLabel: string;
+  answerLabel: string;
+  /** Plain-language link to how this shaped the roadmap. */
+  impact: string;
+}
+
+export interface FlagExplanation {
+  id: keyof Flags;
+  label: string;
+  description: string;
+}
+
+export interface PriorityTrackScore {
+  moduleId: string;
+  title: string;
+  score: number;
+}
+
+export interface RoadmapExplainability {
+  influentialAnswers: InfluentialAnswer[];
+  triggeredFlags: FlagExplanation[];
+  topPriorityTracks: PriorityTrackScore[];
+  /** Short bullets for PDF / print — non-technical. */
+  whySummaryBullets: string[];
+}
+
+export interface BusinessSummary {
+  headline: string;
+  details: { label: string; value: string }[];
+}
+
 export interface Roadmap {
   phases: RoadmapPhase[];
   topPriorities: string[];
   primaryService: ServiceRecommendation;
   secondaryService: ServiceRecommendation;
+  /** Time-boxed next step (sprint / program framing). */
+  recommendedEngagement: RecommendedEngagement;
+  /** Audit vs project vs fractional — orthogonal to service line. */
+  engagementFormat: EngagementFormatRecommendation;
   whyThisRoadmap: string;
+  explainability: RoadmapExplainability;
+  businessSummary: BusinessSummary;
+  executiveSummary: string;
+  watchOuts: string[];
+  industrySegment: IndustrySegment;
+  primaryCta: PrimaryCta;
   answers: IntakeAnswers;
 }
+
+/** Raw scores before ordering and cap — useful for tests and tuning. */
+export type ModuleScoreMap = Record<string, number>;

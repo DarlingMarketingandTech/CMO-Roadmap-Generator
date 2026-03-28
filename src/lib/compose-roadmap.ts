@@ -1,15 +1,37 @@
 import type { IntakeAnswers, Roadmap, RoadmapPhase, RoadmapModule } from './types';
 import { computeFlags } from './flags';
-import { scoreModules, getServiceRecommendations, generateWhyThisRoadmap } from './rules';
+import {
+  computeModuleScores,
+  orderModuleIdsFromScores,
+  getServiceRecommendations,
+  generateWhyThisRoadmap,
+  buildRoadmapExplainability,
+  getRecommendedEngagement,
+  buildBusinessSummary,
+  getEngagementFormatRecommendation,
+  getPrimaryCta,
+  buildExecutiveSummary,
+  buildWatchOuts,
+} from './rules';
 import { ALL_MODULES } from './modules';
+import {
+  resolveIndustrySegment,
+  applyIndustryModuleLens,
+  refineServiceCopyForIndustry,
+} from './industry';
 
 export function composeRoadmap(answers: IntakeAnswers): Roadmap {
   const flags = computeFlags(answers);
-  const moduleIds = scoreModules(flags, answers);
+  const industrySegment = resolveIndustrySegment(answers);
+  const scores = computeModuleScores(flags, answers);
+  const limit = flags.isFounderOnly ? 6 : 8;
+  const moduleIds = orderModuleIdsFromScores(scores, limit);
 
-  const selectedModules = moduleIds
+  let selectedModules = moduleIds
     .map((id) => ALL_MODULES.find((m) => m.id === id))
     .filter((m): m is RoadmapModule => m !== undefined);
+
+  selectedModules = applyIndustryModuleLens(selectedModules, industrySegment);
 
   const total = selectedModules.length;
 
@@ -50,15 +72,31 @@ export function composeRoadmap(answers: IntakeAnswers): Roadmap {
   ];
 
   const topPriorities = selectedModules.slice(0, 3).map((m) => m.title);
-  const { primary, secondary } = getServiceRecommendations(flags, answers);
-  const whyThisRoadmap = generateWhyThisRoadmap(flags, answers);
+  let { primary, secondary } = getServiceRecommendations(flags, answers);
+  ({ primary, secondary } = refineServiceCopyForIndustry(primary, secondary, industrySegment));
+  const whyThisRoadmap = generateWhyThisRoadmap(flags, answers, industrySegment);
+  const explainability = buildRoadmapExplainability(answers, flags, scores);
+  const recommendedEngagement = getRecommendedEngagement(flags, answers);
+  const engagementFormat = getEngagementFormatRecommendation(flags, answers, scores);
+  const businessSummary = buildBusinessSummary(answers);
+  const executiveSummary = buildExecutiveSummary(answers, flags, industrySegment, topPriorities);
+  const watchOuts = buildWatchOuts(answers, flags, industrySegment);
+  const primaryCta = getPrimaryCta(primary.title, flags, answers, industrySegment);
 
   return {
     phases,
     topPriorities,
     primaryService: primary,
     secondaryService: secondary,
+    recommendedEngagement,
+    engagementFormat,
     whyThisRoadmap,
+    explainability,
+    businessSummary,
+    executiveSummary,
+    watchOuts,
+    industrySegment,
+    primaryCta,
     answers,
   };
 }

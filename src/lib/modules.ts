@@ -152,3 +152,6 @@ export const ALL_MODULES: RoadmapModule[] = [
     effort: 'high',
   },
 ];
+
+/** Stable list of module ids — use when initializing scores or iterating rules. */
+export const ALL_MODULE_IDS: string[] = ALL_MODULES.map((m) => m.id);

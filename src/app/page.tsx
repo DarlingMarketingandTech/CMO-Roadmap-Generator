@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { motion } from 'motion/react';
+import { DEMO_PROFILES, demoResultsHref } from '@/lib/demo-profiles';
 import * as styles from './page.css';
 
 const STEPS = [
@@ -15,7 +16,7 @@ const STEPS = [
     number: '2',
     title: 'Get Your Personalized Roadmap',
     description:
-      'Our system analyzes your answers and generates a custom 90-day marketing roadmap built for your situation.',
+      'The rules engine scores roadmap modules from your answers and assembles a phased 90-day plan — deterministic and explainable.',
   },
   {
     number: '3',
@@ -49,12 +50,14 @@ const AUDIENCES = [
 const DELIVERABLES = [
   '3-phase, 90-day marketing roadmap',
   'Prioritized top 3 actions to take first',
-  'Primary service recommendation',
-  'Secondary service recommendation',
-  'Personalized roadmap explanation',
+  'Primary and secondary service recommendations (Darling MarTech–aligned)',
+  'Recommended next-step engagement type',
+  '“Why this roadmap” narrative plus answer / flag / track transparency',
+  'Business summary snapshot for stakeholders',
   'Phase-by-phase module breakdown',
   'Expected outcomes per module',
   'Effort level for each initiative',
+  'Save as PDF via print',
 ];
 
 export default function HomePage() {
@@ -111,8 +114,8 @@ export default function HomePage() {
           <span className={styles.sectionTag}>Simple Process</span>
           <h2 className={styles.sectionTitle}>How It Works</h2>
           <p className={styles.sectionDesc}>
-            Our intelligent roadmap generator analyzes your specific situation and creates a
-            prioritized plan built for your business — in seconds.
+            A deterministic rules engine maps your answers to priorities and phases — same inputs,
+            same roadmap, every time. No black box.
           </p>
         </motion.div>
         <div className={styles.container}>
@@ -172,7 +175,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* ─── WHAT YOU GET ─── */}
+      {/* ─── DEMO PROFILES ─── */}
       <section className={styles.sectionAlt}>
         <div className={styles.container}>
           <motion.div
@@ -182,8 +185,53 @@ export default function HomePage() {
             viewport={{ once: true }}
             transition={{ duration: 0.6 }}
           >
-            <span className={styles.sectionTag}>Your Deliverables</span>
-            <h2 className={styles.sectionTitle}>What You'll Receive</h2>
+            <span className={styles.sectionTag}>Try it instantly</span>
+            <h2 className={styles.sectionTitle}>Sample profiles</h2>
+            <p className={styles.sectionDesc}>
+              One click loads a full roadmap — no typing. Use them to demo the tool or regression-test
+              rule branches. You can also step through the wizard with the same data via “Walk through
+              intake.”
+            </p>
+          </motion.div>
+
+          <div className={styles.demoGrid}>
+            {DEMO_PROFILES.map((profile, i) => (
+              <motion.div
+                key={profile.id}
+                className={styles.demoCard}
+                initial={{ opacity: 0, y: 24 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.45, delay: i * 0.06 }}
+              >
+                <h3 className={styles.demoCardTitle}>{profile.title}</h3>
+                <p className={styles.demoCardBlurb}>{profile.blurb}</p>
+                <div className={styles.demoCardActions}>
+                  <Link href={demoResultsHref(profile)} className={styles.demoLinkPrimary}>
+                    View roadmap →
+                  </Link>
+                  <Link href={`/intake?demo=${profile.id}`} className={styles.demoLinkSecondary}>
+                    Walk through intake
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ─── WHAT YOU GET ─── */}
+      <section className={styles.sectionLight}>
+        <div className={styles.container}>
+          <motion.div
+            className={styles.containerNarrow}
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.6 }}
+          >
+            <span className={styles.sectionTag}>Your deliverables</span>
+            <h2 className={styles.sectionTitle}>What you&apos;ll receive</h2>
             <p className={styles.sectionDesc}>
               Every roadmap includes a complete set of strategic outputs you can start acting on
               immediately.
