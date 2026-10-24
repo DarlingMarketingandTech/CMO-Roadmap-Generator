@@ -23,11 +23,13 @@ Acceptance: numeric/object/string channels, unknown enums, fractional/unknown ma
 
 ### CMO-003 / P1 / Canonical decode result for page and email
 
-The invalid-q fallback now derives the email token from the validated answers. That slice moved into CMO-002 so the displayed plan and the email request cannot diverge.
+Status on October 24, 2026: reviewed against the validation record and committed locally on `cmo-003-invalid-link-handling`, from CMO-002 commit `a07aab2ebb58b31391446418425a8e1e117878b0`. The commit SHA is recorded in the session handoff. `npm test` is 7 tests; an earlier note of 8 counted the suite wrapper.
 
-Still open: define results error status behavior and remove the false expiry wording. The results page still returns the existing error view with HTTP 200. The email route returns 400 and its copy still says the link data may be expired.
+The invalid-q fallback derives the email token from the validated answers; that slice shipped in CMO-002 so the displayed plan and the email request cannot diverge.
 
-Acceptance: page, copied link and email input agree for q-only, legacy-only and mixed parameters; legacy support policy documented. The agreement slice is checked in CMO-002. Status and expiry copy remain. Depends on CMO-002.
+The remaining slice is implemented: a results URL with missing or malformed roadmap input now returns HTTP 404 through `notFound()` and renders a results-segment not-found view that explains the link is invalid or incomplete and routes back to `/intake`. Valid compact links, valid legacy links, and the invalid-q fallback to valid legacy answers still return 200. The email route still returns 400 for a bad token and its copy now says the link data is invalid or incomplete; nothing in a token expires.
+
+Acceptance: page, copied link and email input agree for q-only, legacy-only and mixed parameters; legacy support policy documented. The agreement slice is checked in CMO-002. The 404 status, fallback behavior, and copy were checked locally; see the CMO-003 validation record. Depends on CMO-002.
 
 ### CMO-004 / P1 / Real sequencing and consistent week labels
 

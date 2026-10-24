@@ -84,6 +84,22 @@ describe('shared intake contract', () => {
     assert.deepEqual(planSelection(parsed!.answers), planSelection(clinic.answers));
   });
 
+  it('returns null for missing, empty, or malformed results parameters', () => {
+    assert.equal(parseIntakeAnswersFromResultsParams({}), null);
+    assert.equal(parseIntakeAnswersFromResultsParams({ q: '' }), null);
+    assert.equal(parseIntakeAnswersFromResultsParams({ answers: '' }), null);
+    assert.equal(parseIntakeAnswersFromResultsParams({ q: 'not-a-roadmap-token' }), null);
+    assert.equal(parseIntakeAnswersFromResultsParams({ answers: 'not base64 json' }), null);
+    assert.equal(
+      parseIntakeAnswersFromResultsParams({
+        answers: legacyToken({ ...clinic.answers, activeChannels: 3 }),
+      }),
+      null,
+    );
+    const valid = encodeIntakeAnswersCompact(clinic.answers);
+    assert.equal(parseIntakeAnswersFromResultsParams({ q: [valid, valid] }), null);
+  });
+
   it('rejects malformed channel collections and unknown enums', () => {
     const base = clinic.answers;
     assert.equal(decodeIntakeAnswersLegacy(legacyToken({ ...base, activeChannels: 3 })), null);
@@ -142,7 +158,8 @@ describe('shared intake contract', () => {
       );
       assert.equal(response.status, 400);
       const body = (await response.json()) as { error?: string };
-      assert.equal(typeof body.error, 'string');
+      assert.equal(body.error, 'Invalid or incomplete roadmap link data');
+      assert.equal(body.error?.toLowerCase().includes('expired'), false);
       assert.equal(body.error?.includes('RESEND'), false);
     } finally {
       if (previousKey === undefined) delete process.env.RESEND_API_KEY;

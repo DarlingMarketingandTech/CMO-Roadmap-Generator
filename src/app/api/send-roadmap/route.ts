@@ -45,7 +45,7 @@ export async function POST(request: Request) {
 
   const answers = decodeRoadmapToken(roadmapToken);
   if (!answers) {
-    return NextResponse.json({ error: 'Invalid or expired roadmap link data' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid or incomplete roadmap link data' }, { status: 400 });
   }
 
   const roadmap = composeRoadmap(answers);

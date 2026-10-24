@@ -129,4 +129,24 @@ Recorded October 23, 2026 on `cmo-002-shared-intake-validation`, from CMO-001 co
 | Invalid `q` plus that clinic’s valid legacy link | HTTP 200 and clinic plan content | Confirms fallback still renders. The email token itself is covered by the unit test. |
 | `POST /api/send-roadmap` with the numeric-channel token and a fake provider key | HTTP 400 before composition | No email was sent. The response still uses the existing expiry wording. |
 
-Compatibility chosen in this change: omitted or empty channels become `none`; duplicate channels and `none` combined with another channel are rejected; remaining channels are ordered like the compact codec. Demo module selections, phase day labels, and week labels stayed the same through that normalization. Results error pages still use HTTP 200. That status policy, and the false expiry sentence, remain CMO-003.
+Compatibility chosen in this change: omitted or empty channels become `none`; duplicate channels and `none` combined with another channel are rejected; remaining channels are ordered like the compact codec. Demo module selections, phase day labels, and week labels stayed the same through that normalization. At the time of this record, results error pages still used HTTP 200; that status policy and the false expiry sentence were completed in CMO-003 below.
+
+## CMO-003 local verification
+
+Recorded October 23, 2026 on `cmo-003-invalid-link-handling`, from CMO-002 commit `a07aab2ebb58b31391446418425a8e1e117878b0`. The diff was reviewed against this record and committed locally. Environment: Windows, Node 22.23.2, npm 10.9.8. A recount on October 24, 2026 found 7 tests, not 8: the new case is one test, and the suite wrapper is not an eighth test.
+
+| Check | Observed result | Limits |
+|---|---|---|
+| `npm test` | 7 passed, 0 failed | One new test covers missing, empty, and malformed results parameters. The email assertion checks the exact error sentence. Not a browser test. |
+| `npm run typecheck` | Passed | `tsc --noEmit --incremental false` |
+| `npm run build` | Passed; Next.js 15.5.28 | Buildability only. `.env.local` was present and was not read. |
+| Demo semantic hash | `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14` across 12 demos | Same projection and hash as the CMO-001 and CMO-002 records. Scoring, phase day labels, and week labels are unchanged. |
+| `GET /results` with no parameters on local `next start` | HTTP 404 with the invalid-or-incomplete view | Local production server, not Vercel |
+| `GET /results?answers=` with numeric `activeChannels` | HTTP 404 with the same view | Previously HTTP 200 after CMO-002, HTTP 500 at baseline |
+| Valid compact clinic link | HTTP 200 and the roadmap heading | One demo, not the full matrix |
+| Invalid `q` plus that clinic's valid legacy link | HTTP 200 and clinic plan content | Fallback preserved; email token parity is unit-tested |
+| Unknown route `GET /this-route-does-not-exist` | HTTP 404 with Next's default view | The results-specific copy does not leak to other routes |
+| `POST /api/send-roadmap` with the numeric-channel token | HTTP 400, body `Invalid or incomplete roadmap link data` | No email sent. The word "expired" is gone from the source. |
+| Browser check of the 404 view on that server | View rendered; "Take the Assessment" navigated to `/intake`; a valid compact link rendered the clinic roadmap | Local desktop browser only; no keyboard, mobile, or print review |
+
+Status policy chosen in this change: a results URL whose roadmap input is missing or fails the shared intake contract is a document that does not exist, so the page calls `notFound()` and Next.js serves HTTP 404 from `src/app/results/not-found.tsx`. A rendered page cannot carry a 4xx status any other way in the App Router; the email route keeps HTTP 400. Known limitation: the 404 view's markup arrives in the streamed flight payload and renders client-side, so it needs JavaScript, unlike the fully server-rendered 200 roadmap pages. The no-JavaScript fallback remains an open UX item per the product brief.
