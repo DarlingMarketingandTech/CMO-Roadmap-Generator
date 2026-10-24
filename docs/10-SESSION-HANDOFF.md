@@ -1,35 +1,39 @@
 # Next-session handoff
 
-Updated October 23, 2026 after the local CMO-001 dependency patch. This file is the short continuation entry point; update it after implementation work rather than duplicating project status across several instruction files.
+Updated October 23, 2026 after the local CMO-002 intake validation. This file is the short continuation entry point.
 
 ## Current state
 
-Canonical working copy: `C:\dev\CMO-Roadmap-Generator`. Local branch `cmo-001-supported-dependencies`, based on `origin/main` at `d7ad20bb3df07d6e7be2a5af932f509738a4aede`. This commit is the CMO-001 checkpoint. The branch has not been pushed. No pull request, deployment, issue, or email was created.
+Canonical working copy: `C:\dev\CMO-Roadmap-Generator`. CMO-001 is local commit `77413607aed8630c717c768052e2a2d7dfa7236f` on `cmo-001-supported-dependencies`, based on `d7ad20bb3df07d6e7be2a5af932f509738a4aede`. It was not pushed.
 
-CMO-001 is committed locally and is not a release. Next.js is pinned to 15.5.28, Zod to 4.6.7, and Resend to 6.34.1. React and React DOM remain 19.1.0 because the current audit did not flag them. PostCSS 8.5.31 and Sharp 0.35.5 are explicit overrides: Next 15.5.28 still depends on PostCSS 8.4.31, and its Sharp range can still resolve to 0.34.5. Node is pinned to `22.x || 24.x`, with package manager `npm@10.9.8`. This session verified Node 22.23.2. The audit's production deployment note said Node 24.x; that setting was not opened or changed.
+CMO-002 was reviewed against the validation record and committed locally on `cmo-002-shared-intake-validation`. No push, deployment, pull request, or email was created.
 
-The updated lockfile audit reported zero vulnerabilities, including dev dependencies. Clean `npm ci`, `npm run typecheck`, and `npm run build` passed on Next.js 15.5.28. Twelve committed demo plans had the same semantic SHA-256 before and after the dependency change: `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14`. That output still contains the known week/phase contradictions. Browser, keyboard, print, and delivery checks remain open.
+One Zod intake contract now feeds the form, compact `q` links, legacy `answers` links, results rendering, and email submission. Invalid enums, non-array channels, duplicate channels, `none` mixed with real channels, fractional masks, mask bits above 127, and oversized tokens fail closed. A numeric `activeChannels` legacy URL renders the existing error view with HTTP 200 instead of throwing. The email route returns HTTP 400 for that token before composition.
+
+An invalid `q` with a valid legacy payload displays the legacy answers, and the email token is the compact encoding of those validated answers. Empty or omitted channels become `none`. Surviving channels use compact-codec order so the token reopens to the same object. Scoring, phase day labels, and week labels were not changed. The 12 demo plans still hash to `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14`.
+
+Checks on Node 22.23.2 and npm 10.9.8: `npm test` 6 passed; `npm run typecheck` passed; `npm run build` passed on Next.js 15.5.28. A local production server confirmed the malformed legacy page, a valid compact clinic page, and the invalid-q fallback. Browser, keyboard, print, and delivery checks remain open.
 
 ## Active milestone
 
-The dependency half of M0 is locally checked. The next bounded item is CMO-002: one shared intake schema and a regression for the malformed legacy link. Do not start a redesign, Next 16 migration, database, or AI service.
+CMO-002 is committed. The next bounded item is the rest of CMO-003: results error status behavior and removal of the false expiry sentence. Do not start scheduling, a redesign, Next 16, a database, or an AI service. D02 is still required before CMO-004.
 
 ## First actions
 
-1. Recheck Next 15 maintenance status before a later release. On October 23, 2026 the support page still listed 15.x as Maintenance LTS, while its two-year wording starts at the October 21, 2024 release.
-2. Implement CMO-002 on this dependency baseline. Use the demo hash above as the unchanged-behavior reference until a scheduling or validation change is intentional.
+1. Decide whether a bad results URL should stay on the current HTTP 200 error view or use a non-success status. Remove the expiry wording when that copy is changed.
+2. Keep the demo hash above as the reference until a scheduling change is intentional.
 
 ## Known traps
 
 - Old README names removed files and styling libraries.
-- `npm run typecheck` now exists. Lint and test scripts still do not.
+- `npm test` and `npm run typecheck` exist. There is still no lint script.
 - Setting STRATEGY_CONTACT_EMAIL does not fix the hardcoded client mailto address.
 - A compact schema version is not a rules/content version.
-- A READY deployment, a passing build, or a clean audit does not validate marketing advice or real delivery.
-- The only historical Actions success is a Copilot agent run, not application CI.
+- A passing build, a clean audit, or HTTP 200 on an error view does not validate marketing advice or real delivery.
 - Next 15.5.28 alone does not move PostCSS or Sharp to the patched versions. Keep the overrides with the Next pin.
 - The demo hash is a stability check. It is not evidence that the displayed weeks are a schedule.
+- The email route can still say link data is expired. Nothing in the token expires.
 
 ## Decisions and external actions
 
-D01 remains open. This work stayed in the existing repository because moving was not required. D12's 15.x patch is implemented locally; a Next 16 upgrade remains deferred. No push, deployment, or message was authorized or performed. Keep credentials and personal submissions out of this file.
+D01 remains open. D12's 15.x patch is the CMO-001 commit above; Next 16 remains deferred. D13 records the channel normalization used by CMO-002. No push, deployment, or message was performed. Keep credentials and personal submissions out of this file.

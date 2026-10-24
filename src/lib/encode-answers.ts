@@ -1,4 +1,17 @@
 import type { IntakeAnswers, ActiveChannel } from './types';
+import {
+  BOTTLENECK_ORDER,
+  BUSINESS_TYPE_ORDER,
+  CHANNEL_ORDER,
+  COMPACT_SCHEMA_VERSION,
+  GOAL_ORDER,
+  MAX_CHANNEL_MASK,
+  MAX_INTAKE_TOKEN_LENGTH,
+  STACK_ORDER,
+  STAGE_ORDER,
+  TEAM_ORDER,
+  canonicalizeIntakeAnswers,
+} from './intake-schema';
 
 /**
  * Legacy: full JSON base64 in `answers` query param.
@@ -13,72 +26,14 @@ export function encodeIntakeAnswersForQuery(answers: IntakeAnswers): string {
 
 // --- Compact share encoding (`q` param): shorter, deterministic, no DB ---
 
-const SCHEMA_VERSION = 1;
-
-const BUSINESS_TYPE_ORDER = [
-  'b2b-saas',
-  'local-service',
-  'healthcare',
-  'ecommerce',
-  'professional-service',
-  'agency',
-  'nonprofit',
-  'other',
-] as const satisfies readonly IntakeAnswers['businessType'][];
-
-const STAGE_ORDER = [
-  'pre-launch',
-  'early',
-  'growth',
-  'established',
-  'enterprise',
-] as const satisfies readonly IntakeAnswers['businessStage'][];
-
-const GOAL_ORDER = [
-  'more-leads',
-  'more-bookings',
-  'roi-clarity',
-  'brand-awareness',
-  'retention',
-  'launch',
-] as const satisfies readonly IntakeAnswers['primaryGoal'][];
-
-const BOTTLENECK_ORDER = [
-  'unclear-messaging',
-  'no-leads',
-  'messy-stack',
-  'poor-conversion',
-  'no-reporting',
-  'team-capacity',
-] as const satisfies readonly IntakeAnswers['bottleneck'][];
-
-const STACK_ORDER = ['none', 'basic', 'messy', 'solid', 'advanced'] as const satisfies readonly IntakeAnswers['stackMaturity'][];
-
-const TEAM_ORDER = [
-  'founder-only',
-  'small-team',
-  'dedicated-marketer',
-  'full-team',
-] as const satisfies readonly IntakeAnswers['teamCapacity'][];
-
-const CHANNEL_ORDER: readonly ActiveChannel[] = [
-  'seo',
-  'paid-search',
-  'social-media',
-  'email',
-  'content',
-  'events',
-  'referral',
-  'none',
-];
-
 function indexOf<T extends string>(order: readonly T[], value: T): number {
   const i = order.indexOf(value);
-  return i >= 0 ? i : 0;
+  if (i < 0) throw new Error(`Unknown intake value: ${value}`);
+  return i;
 }
 
 function channelsToBitmask(channels: IntakeAnswers['activeChannels']): number {
-  if (!channels.length || channels.includes('none')) return 0;
+  if (channels.length === 1 && channels[0] === 'none') return 0;
   let bits = 0;
   for (let i = 0; i < CHANNEL_ORDER.length - 1; i++) {
     const ch = CHANNEL_ORDER[i];
@@ -93,10 +48,19 @@ function bitmaskToChannels(bits: number): IntakeAnswers['activeChannels'] {
   for (let i = 0; i < CHANNEL_ORDER.length - 1; i++) {
     if (bits & (1 << i)) out.push(CHANNEL_ORDER[i]);
   }
-  return out.length ? out : ['none'];
+  return out;
 }
 
-type CompactPayload = readonly [typeof SCHEMA_VERSION, number, number, number, number, number, number, number];
+type CompactPayload = readonly [
+  typeof COMPACT_SCHEMA_VERSION,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+  number,
+];
 
 function toBase64Url(json: string): string {
   if (typeof Buffer !== 'undefined') {
@@ -121,45 +85,54 @@ function fromBase64Url(s: string): string {
 
 /** Compact URL token for `q` — typically shorter than legacy `answers` JSON base64. */
 export function encodeIntakeAnswersCompact(answers: IntakeAnswers): string {
+  const canonical = canonicalizeIntakeAnswers(answers);
+  if (!canonical) throw new Error('Cannot encode invalid intake answers');
   const payload: CompactPayload = [
-    SCHEMA_VERSION,
-    indexOf(BUSINESS_TYPE_ORDER, answers.businessType),
-    indexOf(STAGE_ORDER, answers.businessStage),
-    indexOf(GOAL_ORDER, answers.primaryGoal),
-    indexOf(BOTTLENECK_ORDER, answers.bottleneck),
-    channelsToBitmask(answers.activeChannels ?? []),
-    indexOf(STACK_ORDER, answers.stackMaturity),
-    indexOf(TEAM_ORDER, answers.teamCapacity),
+    COMPACT_SCHEMA_VERSION,
+    indexOf(BUSINESS_TYPE_ORDER, canonical.businessType),
+    indexOf(STAGE_ORDER, canonical.businessStage),
+    indexOf(GOAL_ORDER, canonical.primaryGoal),
+    indexOf(BOTTLENECK_ORDER, canonical.bottleneck),
+    channelsToBitmask(canonical.activeChannels),
+    indexOf(STACK_ORDER, canonical.stackMaturity),
+    indexOf(TEAM_ORDER, canonical.teamCapacity),
   ];
   return toBase64Url(JSON.stringify(payload));
 }
 
+function boundedToken(token: string): string | null {
+  const trimmed = token.trim();
+  if (!trimmed || trimmed.length > MAX_INTAKE_TOKEN_LENGTH) return null;
+  return trimmed;
+}
+
+function isIntegralIndex(value: unknown, length: number): value is number {
+  return typeof value === 'number' && Number.isInteger(value) && value >= 0 && value < length;
+}
+
 export function decodeIntakeAnswersCompact(token: string): IntakeAnswers | null {
   try {
-    const raw = fromBase64Url(decodeURIComponent(token.trim()));
-    const arr = JSON.parse(raw) as number[];
-    if (!Array.isArray(arr) || arr.length !== 8 || arr[0] !== SCHEMA_VERSION) return null;
+    const bounded = boundedToken(token);
+    if (!bounded) return null;
+    const raw = fromBase64Url(decodeURIComponent(bounded));
+    const arr: unknown = JSON.parse(raw);
+    if (!Array.isArray(arr) || arr.length !== 8 || arr[0] !== COMPACT_SCHEMA_VERSION) return null;
     const [, ti, si, gi, bi, bits, mi, ki] = arr;
     if (
-      [ti, si, gi, bi, mi, ki].some(
-        (n) => typeof n !== 'number' || !Number.isInteger(n) || n < 0,
-      ) ||
+      !isIntegralIndex(ti, BUSINESS_TYPE_ORDER.length) ||
+      !isIntegralIndex(si, STAGE_ORDER.length) ||
+      !isIntegralIndex(gi, GOAL_ORDER.length) ||
+      !isIntegralIndex(bi, BOTTLENECK_ORDER.length) ||
+      !isIntegralIndex(mi, STACK_ORDER.length) ||
+      !isIntegralIndex(ki, TEAM_ORDER.length) ||
       typeof bits !== 'number' ||
-      bits < 0
+      !Number.isInteger(bits) ||
+      bits < 0 ||
+      bits > MAX_CHANNEL_MASK
     ) {
       return null;
     }
-    if (
-      ti >= BUSINESS_TYPE_ORDER.length ||
-      si >= STAGE_ORDER.length ||
-      gi >= GOAL_ORDER.length ||
-      bi >= BOTTLENECK_ORDER.length ||
-      mi >= STACK_ORDER.length ||
-      ki >= TEAM_ORDER.length
-    ) {
-      return null;
-    }
-    return {
+    return canonicalizeIntakeAnswers({
       businessType: BUSINESS_TYPE_ORDER[ti],
       businessStage: STAGE_ORDER[si],
       primaryGoal: GOAL_ORDER[gi],
@@ -167,52 +140,44 @@ export function decodeIntakeAnswersCompact(token: string): IntakeAnswers | null 
       activeChannels: bitmaskToChannels(bits),
       stackMaturity: STACK_ORDER[mi],
       teamCapacity: TEAM_ORDER[ki],
-    };
+    });
   } catch {
     return null;
   }
 }
 
-/** Decode legacy `answers` base64 JSON. */
+/** Decode legacy `answers` base64 JSON through the shared intake contract. */
 export function decodeIntakeAnswersLegacy(encoded: string): IntakeAnswers | null {
   try {
-    const json = Buffer.from(decodeURIComponent(encoded), 'base64').toString('utf-8');
-    const answers = JSON.parse(json) as IntakeAnswers;
-    if (
-      !answers.businessType ||
-      !answers.businessStage ||
-      !answers.primaryGoal ||
-      !answers.bottleneck ||
-      !answers.stackMaturity ||
-      !answers.teamCapacity
-    ) {
-      return null;
-    }
-    if (!answers.activeChannels) answers.activeChannels = [];
-    return answers;
+    const bounded = boundedToken(encoded);
+    if (!bounded) return null;
+    const json = Buffer.from(decodeURIComponent(bounded), 'base64').toString('utf-8');
+    return canonicalizeIntakeAnswers(JSON.parse(json));
   } catch {
     return null;
   }
+}
+
+export interface ParsedIntakeAnswers {
+  answers: IntakeAnswers;
+  /** Compact token for the validated answers. Safe to submit and to reopen. */
+  token: string;
 }
 
 /**
- * Parse results URL params: prefers `q` (compact), then `answers` (legacy).
+ * Parse results URL params. A valid compact `q` wins. An invalid `q` falls
+ * back to a valid legacy `answers` payload, and the returned token is derived
+ * from those validated answers rather than the rejected `q` value.
  */
 export function parseIntakeAnswersFromResultsParams(params: {
   q?: string | string[];
   answers?: string | string[];
-}): IntakeAnswers | null {
-  const qRaw = params.q;
-  const aRaw = params.answers;
-  const q = typeof qRaw === 'string' ? qRaw : undefined;
-  const a = typeof aRaw === 'string' ? aRaw : undefined;
+}): ParsedIntakeAnswers | null {
+  const q = typeof params.q === 'string' ? params.q : undefined;
+  const legacy = typeof params.answers === 'string' ? params.answers : undefined;
 
-  if (q) {
-    const fromQ = decodeIntakeAnswersCompact(q);
-    if (fromQ) return fromQ;
-  }
-  if (a) {
-    return decodeIntakeAnswersLegacy(a);
-  }
-  return null;
+  const fromQ = q ? decodeIntakeAnswersCompact(q) : null;
+  const answers = fromQ ?? (legacy ? decodeIntakeAnswersLegacy(legacy) : null);
+  if (!answers) return null;
+  return { answers, token: encodeIntakeAnswersCompact(answers) };
 }

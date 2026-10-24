@@ -113,3 +113,20 @@ Reachable feature review:
 - Resend 6.9.4 pulled `svix` and `uuid` 10.0.0. The send route calls `emails.send` and does not verify webhooks. Resend 6.34.1 stays on major 6 and removes that chain. The existing call site typechecks. No email was sent.
 
 Blocked for this item: browser, keyboard, print, production deployment, and a real email delivery check. A passing build does not close those.
+
+## CMO-002 local verification
+
+Recorded October 23, 2026 on `cmo-002-shared-intake-validation`, from CMO-001 commit `77413607aed8630c717c768052e2a2d7dfa7236f`. The diff was reviewed and committed locally; the commit SHA is in the session handoff. Environment: Windows, Node 22.23.2, npm 10.9.8.
+
+| Check | Observed result | Limits |
+|---|---|---|
+| `npm test` | 6 passed, 0 failed | Parser, demo round-trip, and one email-route rejection. Not a browser test. |
+| `npm run typecheck` | Passed | Includes the new test file |
+| `npm run build` | Passed; Next.js 15.5.28 | Buildability only. `.env.local` was present and was not read. |
+| Demo semantic hash | `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14` across 12 demos | Same hash as before CMO-001 and after it. Week labels are unchanged. |
+| `GET /results?answers=` with numeric `activeChannels` on local `next start` | HTTP 200 and the existing “Something Went Wrong” view | Previously reproduced as HTTP 500. This was a local production server, not Vercel. |
+| Valid compact clinic link on that server | HTTP 200 and the roadmap heading | One demo, not the full matrix |
+| Invalid `q` plus that clinic’s valid legacy link | HTTP 200 and clinic plan content | Confirms fallback still renders. The email token itself is covered by the unit test. |
+| `POST /api/send-roadmap` with the numeric-channel token and a fake provider key | HTTP 400 before composition | No email was sent. The response still uses the existing expiry wording. |
+
+Compatibility chosen in this change: omitted or empty channels become `none`; duplicate channels and `none` combined with another channel are rejected; remaining channels are ordered like the compact codec. Demo module selections, phase day labels, and week labels stayed the same through that normalization. Results error pages still use HTTP 200. That status policy, and the false expiry sentence, remain CMO-003.

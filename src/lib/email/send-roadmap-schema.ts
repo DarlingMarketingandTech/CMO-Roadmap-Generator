@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { MAX_INTAKE_TOKEN_LENGTH } from '../intake-schema';
 
 /**
  * POST /api/send-roadmap — validated JSON body.
@@ -16,7 +17,7 @@ export const sendRoadmapRequestSchema = z
       }),
     email: z.string().trim().min(3).max(254).email('Enter a valid email'),
     company: z.union([z.string().trim().max(200), z.literal('')]).optional(),
-    roadmapToken: z.string().trim().min(12).max(12000),
+    roadmapToken: z.string().trim().min(12).max(MAX_INTAKE_TOKEN_LENGTH),
     /** Honeypot — must be empty (bots often fill hidden fields). */
     _hp: z.string().optional(),
   })

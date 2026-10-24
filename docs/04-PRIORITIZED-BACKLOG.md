@@ -6,7 +6,7 @@ Initial status for every item: **Proposed**. The package creates no GitHub issue
 
 ### CMO-001 / P0 / Canonical baseline and supported dependencies
 
-Status on October 23, 2026: locally checked and committed on `cmo-001-supported-dependencies`. Base SHA is `d7ad20bb3df07d6e7be2a5af932f509738a4aede`. Push and deployment remain pending. The commit SHA is the target recorded in the session handoff after the commit.
+Status on October 23, 2026: committed locally as `77413607aed8630c717c768052e2a2d7dfa7236f` on `cmo-001-supported-dependencies`. Base SHA is `d7ad20bb3df07d6e7be2a5af932f509738a4aede`. Push and deployment remain pending.
 
 Preserve source/history, select the canonical home, pin runtime/package manager and patch the lockfile from reviewed current advisories. Capture current fixture outputs before changing policy.
 
@@ -14,15 +14,20 @@ Acceptance: exact base and target SHA recorded; clean install/type/build pass; d
 
 ### CMO-002 / P0 / Shared validated intake and legacy crash regression
 
+Status on October 23, 2026: reviewed against the validation record and committed locally on `cmo-002-shared-intake-validation`. It includes the canonical-token fix below because email must submit the answers that are displayed. The commit SHA is recorded in the session handoff.
+
 Introduce one runtime schema; validate every decoded format; normalize channels. Bound tokens and compact bitmasks.
 
-Acceptance: numeric/object/string channels, unknown enums, fractional/unknown masks and oversized tokens fail safely. Existing valid fixtures round-trip. Local malformed legacy route no longer yields 500. API rejects the same payload before composition. Depends on CMO-001 check baseline.
+Acceptance: numeric/object/string channels, unknown enums, fractional/unknown masks and oversized tokens fail safely. Existing valid fixtures round-trip. Local malformed legacy route no longer yields 500. API rejects the same payload before composition. Depends on CMO-001 check baseline. Local checks passed; see the validation record. Push and deployment were not done.
+
 
 ### CMO-003 / P1 / Canonical decode result for page and email
 
-Fix invalid-q/valid-legacy fallback by deriving a canonical token from validated answers. Define error states/status behavior and remove false expiry language.
+The invalid-q fallback now derives the email token from the validated answers. That slice moved into CMO-002 so the displayed plan and the email request cannot diverge.
 
-Acceptance: page, copied link and email input agree for q-only, legacy-only and mixed parameters; legacy support policy documented. Depends on CMO-002.
+Still open: define results error status behavior and remove the false expiry wording. The results page still returns the existing error view with HTTP 200. The email route returns 400 and its copy still says the link data may be expired.
+
+Acceptance: page, copied link and email input agree for q-only, legacy-only and mixed parameters; legacy support policy documented. The agreement slice is checked in CMO-002. Status and expiry copy remain. Depends on CMO-002.
 
 ### CMO-004 / P1 / Real sequencing and consistent week labels
 

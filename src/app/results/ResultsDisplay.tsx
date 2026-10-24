@@ -4,7 +4,6 @@ import Link from 'next/link';
 import { motion } from 'motion/react';
 import type { IndustrySegment, Roadmap } from '@/lib/types';
 import { getClientBookingPrimaryHref } from '@/lib/booking-url';
-import { encodeIntakeAnswersCompact } from '@/lib/encode-answers';
 import { buildMailtoHref } from '@/lib/rules';
 import BrandWordmark from '@/components/brand/BrandWordmark';
 import { springEntrance } from '@/lib/motion';
@@ -14,8 +13,8 @@ import styles from './page.module.css';
 
 interface ResultsDisplayProps {
   roadmap: Roadmap;
-  shareQ?: string;
-  shareAnswersLegacy?: string;
+  /** Canonical compact token for the validated answers shown in this roadmap. */
+  roadmapToken: string;
 }
 
 const PHASE_LABELS: Record<number, string> = {
@@ -47,13 +46,8 @@ const SEGMENT_COPY: Record<IndustrySegment, string> = {
 
 export default function ResultsDisplay({
   roadmap,
-  shareQ,
-  shareAnswersLegacy,
+  roadmapToken,
 }: ResultsDisplayProps) {
-  const roadmapToken =
-    shareQ?.trim() ||
-    shareAnswersLegacy?.trim() ||
-    encodeIntakeAnswersCompact(roadmap.answers);
   const {
     phases,
     topPriorities,

@@ -24,7 +24,8 @@ This document separates confirmed task direction from proposals. Do not mark imp
 | D09 | Public license? | Owner chooses deliberately after checking rights; source visibility alone is insufficient. | Open before open-source release |
 | D10 | Brand/name and services? | Match the selected current LLC site; use stable service IDs separate from labels. | Open before presentation/integration |
 | D11 | Inquiry choices? | One reliable email request plus a real discussion link; remove stubs. | Proposed for immediate cleanup |
-| D12 | Framework upgrade strategy? | Patch supported 15.x first, isolate any major upgrade from policy changes. Recheck support/advisories when starting. | 15.5.28 patch implemented locally on October 23, 2026. Next 16 remains deferred. |
+| D12 | Framework upgrade strategy? | Patch supported 15.x first, isolate any major upgrade from policy changes. Recheck support/advisories when starting. | 15.5.28 patch committed locally as `77413607aed8630c717c768052e2a2d7dfa7236f`. Next 16 remains deferred. |
+| D13 | How should imperfect channel lists be read? | Empty or omitted channels mean `none`. Reject duplicates and `none` mixed with real channels. Store surviving channels in compact-codec order so the share token decodes to the displayed answers. | Implemented with CMO-002. Scoring and week labels were not changed. |
 
 None of these choices needs to block source review, fixtures or a dependency assessment. Ask only when the actual work depends on the answer.
 

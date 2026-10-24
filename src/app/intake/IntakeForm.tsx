@@ -8,6 +8,7 @@ import { QUESTIONS } from '@/lib/questions';
 import type { IntakeAnswers } from '@/lib/types';
 import { getDemoProfileById } from '@/lib/demo-profiles';
 import { encodeIntakeAnswersCompact } from '@/lib/encode-answers';
+import { canonicalizeIntakeAnswers } from '@/lib/intake-schema';
 import BrandWordmark from '@/components/brand/BrandWordmark';
 import styles from './page.module.css';
 
@@ -105,7 +106,12 @@ export default function IntakeForm() {
   }
 
   function submitForm() {
-    const compact = encodeIntakeAnswersCompact(allValues as IntakeAnswers);
+    const answers = canonicalizeIntakeAnswers(allValues);
+    if (!answers) {
+      setValidationError(true);
+      return;
+    }
+    const compact = encodeIntakeAnswersCompact(answers);
     router.push(`/results?q=${encodeURIComponent(compact)}`);
   }
 

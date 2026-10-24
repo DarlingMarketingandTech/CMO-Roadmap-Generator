@@ -10,25 +10,15 @@ interface ResultsPageProps {
 
 export default async function ResultsPage({ searchParams }: ResultsPageProps) {
   const params = await searchParams;
-  const answers = parseIntakeAnswersFromResultsParams(params);
+  const parsed = parseIntakeAnswersFromResultsParams(params);
 
-  if (!answers) {
+  if (!parsed) {
     return <ErrorState />;
   }
 
-  const roadmap = composeRoadmap(answers);
-  const rawQ = params.q;
-  const rawA = params.answers;
-  const shareQ = typeof rawQ === 'string' ? rawQ : undefined;
-  const shareAnswersLegacy = typeof rawA === 'string' ? rawA : undefined;
+  const roadmap = composeRoadmap(parsed.answers);
 
-  return (
-    <ResultsDisplay
-      roadmap={roadmap}
-      shareQ={shareQ}
-      shareAnswersLegacy={shareAnswersLegacy}
-    />
-  );
+  return <ResultsDisplay roadmap={roadmap} roadmapToken={parsed.token} />;
 }
 
 function ErrorState() {

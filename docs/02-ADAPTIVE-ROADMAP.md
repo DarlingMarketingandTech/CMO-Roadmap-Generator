@@ -40,7 +40,7 @@ Preserve the March baseline and import history if moving. Recheck current adviso
 
 Completion: source baseline retained; upgraded branch builds/types check; domain fixture behavior unchanged except documented dependency effects. A new build alone does not authorize production release.
 
-Local status on October 23, 2026: the 15.5.28 patch, lockfile overrides, clean install, typecheck, and build are checked on an uncommitted branch. Next 16 and production release stay deferred. Details are in the validation record and session handoff.
+Local status on October 23, 2026: the 15.5.28 patch, lockfile overrides, clean install, typecheck, and build are committed locally as CMO-001 (`77413607aed8630c717c768052e2a2d7dfa7236f`). Next 16 and production release stay deferred. Details are in the validation record and session handoff.
 
 ### Slice B: close trust-breaking bugs
 
