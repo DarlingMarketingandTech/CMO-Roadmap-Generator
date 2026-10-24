@@ -51,9 +51,11 @@ Acceptance: accountant/consultant fixtures avoid legal-case language; messy-bott
 
 ### CMO-006 / P1 / Achievable plan and first action
 
+Status on October 24, 2026: D16 is accepted and implemented locally on `cmo-006-actionable-first-action`, from CMO-005 commit `e71abe40d2f8b651421ba81a859173b3428df0f0`. No push or deployment. Website conversion, CRM cleanup, and attribution cleanup show a starting task, the output to keep, a field-level completion check, and the access or prerequisite. When no channel is named, the website task asks for the desired customer action and does not claim there is no live page or no current traffic. Overall module effort is labeled as the whole module. Scores, module order, phase placement, and service titles are unchanged. The CMO-003, CMO-004, and CMO-005 hashes are unchanged. CTA alignment is the next slice, before starting guidance for the other seven modules. D04 stays open. The five-scenario acceptance is still ahead of the remaining modules.
+
 Choose pilot audience; add actionable tasks, definitions of done and minimum capacity/readiness inputs. Avoid question bloat.
 
-Acceptance: five representative scenarios each have one clear next action, reason, prerequisite, realistic effort band and completion evidence; assumptions/deferred items visible; no revenue guarantees. Depends on CMO-004/005.
+Acceptance: five representative scenarios each have one clear next action, reason, prerequisite, realistic effort band and completion evidence; assumptions/deferred items visible; no revenue guarantees. Depends on CMO-004/005. This draft covers three modules and does not add a capacity question. D04 stays open. The full five-scenario acceptance remains ahead of implementation.
 
 ### CMO-007 / P1 / Remove phantom inquiry capture and fix destinations
 

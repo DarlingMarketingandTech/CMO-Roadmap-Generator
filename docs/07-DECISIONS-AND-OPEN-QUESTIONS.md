@@ -28,6 +28,7 @@ This document separates confirmed task direction from proposals. Do not mark imp
 | D13 | How should imperfect channel lists be read? | Empty or omitted channels mean `none`. Reject duplicates and `none` mixed with real channels. Store surviving channels in compact-codec order so the share token decodes to the displayed answers. | Implemented with CMO-002. Scoring and week labels were not changed. |
 | D14 | What HTTP status should an invalid results link return? | A missing or malformed roadmap input is a document that does not exist: HTTP 404 via `notFound()` with a helpful results-segment view and a route back to intake. The email route keeps 400. Links never expire, so error copy says invalid or incomplete. | Implemented with CMO-003 and committed locally. Valid and fallback links stay 200. |
 | D15 | When should the service card follow the scored modules? | Keep the existing service, engagement, and summary branch order. Say so when bookings and ROI, or retention and conversion, both apply. Do not claim the service follows the scores. | Recorded with CMO-005. The false score claim is removed and the split is explained. The disagreement remains a product limitation and needs a coherence review before a public pilot. Service order was not changed. |
+| D16 | What concrete task should the first scheduled module ask the owner to do? | Show one starting task, the artifact it produces, a field-level completion check, and the access or prerequisite that task needs. The effort band is labeled overall module effort. Website conversion, CRM cleanup, and attribution cleanup only. Service order and phase order stay unchanged. CTA alignment remains the next change. | Accepted October 24, 2026 with the refinements below. Implemented locally. |
 
 None of these choices needs to block source review, fixtures or a dependency assessment. Ask only when the actual work depends on the answer.
 
@@ -170,4 +171,88 @@ The manual-workflow demo is the same kind of split. CRM scores 18 and MarTech sc
 
 The results and print sentence is: “These service suggestions follow a fixed order of your answers. They can name different work than the highest-scored modules.” The email template never claimed the services follow the scores. It still shows the service titles the branch lists choose.
 
-Reconsider if Jacob wants one of these lists to follow the top scored module, or wants bookings and ROI, or retention and conversion, to share one winner. Prerequisite edges, channel-specific strategy, and a new profession question are separate decisions.
+Reconsider if Jacob wants one of these lists to follow the top scored module, or wants bookings and ROI, or retention and conversion, to share one winner. Prerequisite edges, channel-specific strategy, and a new profession question are separate decisions. The coherence review before a public pilot is still open. D16 proposes the first-action content and a CTA follow-up without changing this order.
+
+## D16 — First action for three modules
+
+Decision ID: D16. Date: October 24, 2026. Owner: Jacob. Status: **accepted October 24, 2026 with the refinements below. Implemented locally on `cmo-006-actionable-first-action`. The CTA follow-up is not part of this implementation.**
+
+Accepted refinements, applied in the implementation:
+
+- Completion requires named fields in the note. Rereading the note is not the completion check. When an active channel is named, the note names the desired customer action, the current request, and where inquiries arrive. When no channel is named, the note names the desired customer action. That answer does not establish whether a page or traffic exists, so the copy does not claim either is absent.
+- A blocked CRM login completes the access check only. The cleanup task stays blocked. That state is not completed cleanup. With no formal stack, the output is the list of inquiry sources the owner can already see.
+- Attribution shows the KPI baseline prerequisite beside the starting action. The note needs a written outcome definition and a current number, or an explicit "number unavailable" entry. That entry documents the gap. A usable baseline is the definition plus a current number. Deeper attribution and channel ROI stay blocked until that measurement exists. The scheduler still places attribution ahead of the baseline in saas-reporting.
+- The existing effort band is labeled "Overall module effort." It describes the whole module. It does not estimate the starting task.
+
+The starting action renders once, before the top-three cards and before the module outcome list. On that first module, the catalog outcomes are labeled "Later work in this module." Other modules keep "Expected outcomes" and their existing effort wording. The email includes the starting-action fields and, for attribution, the prerequisite. It does not repeat the later outcome bullets. See the CMO-006 validation record for the coverage difference and the CTA mismatch.
+
+CMO-006 asks for one next action, a reason, a prerequisite, the existing effort band, and completion evidence. This proposal covers the first scheduled module only, and only three module ids. The other seven modules keep their current descriptions until a later pass. No new intake question is added. D04 stays open. Service precedence and phase order stay as CMO-005 left them.
+
+The current catalog describes a program and then lists outcomes that read as finished work. Website conversion says a CRO audit is completed, page changes are deployed, and Core Web Vitals are improved. CRM cleanup says data is enriched, routing is corrected, and lead scoring is implemented. Attribution cleanup says an attribution model is implemented, channel ROI is calculated, and budget recommendations are delivered. The intake collects business type, stage, goal, bottleneck, active channels, stack maturity, and team capacity. It does not collect a URL, a tool name, a staff roster, a budget, or hours available. The existing effort value stays a low, medium, or high band. This proposal does not convert that band into hours or days.
+
+The pilot lens is the product brief's owner-led local and professional audience. The drafts below use only answers every current business type already gives, so the same sentences can render for the other types. That does not claim equal industry depth.
+
+### Website conversion
+
+The current module id is `website-conversion`. Its catalog effort band is high. The page labels that band "Overall module effort."
+
+When `activeChannels` is `none`, the intake did not name an active channel. That answer does not establish whether a page or traffic exists. The starting task is to write the one request the first page should make of a visitor. The useful output is that sentence. The task is done when the note names the desired customer action. The only setup required is the goal already selected in intake. The task does not claim a page was redesigned.
+
+When any other channel is selected, the starting task is to open the page a person reaches from one of those channels and write three lines: where the inquiry arrives, what the page currently asks the visitor to do, and the one request the owner wants that page to make. The useful output is that three-line note. The task is done when the note names the desired customer action, the current request, and where inquiries arrive. The setup required is access to a page the owner already uses. The intake does not store a URL, so the sentence asks the owner to open the page they already know. A founder-only answer means this note is the whole first action. The capacity label stays a scope limit. It does not become a staff count or an hour budget.
+
+Deployed design changes and Core Web Vitals work remain later work inside the same module. They are not the definition of done for this task.
+
+### CRM cleanup
+
+The current module id is `crm-cleanup`. Its catalog effort band is medium. The page labels that band "Overall module effort."
+
+When stack maturity is `none`, the selected answer is "No Formal Stack." The starting task is to list every place a new inquiry arrives that the owner can already see, such as an inbox, a phone, a form, a spreadsheet, or a notebook. The useful output is that list, including an explicit blank if one combined list does not exist. The task is done when each place is written down and the note says whether one list shows all of them. The setup required is the owner's own view of those places. The task does not require buying a CRM, enriching records, or implementing lead scoring.
+
+When stack maturity is `basic`, `messy`, `solid`, or `advanced`, the answers say some tooling exists and do not name the product. The starting task is to open the current inquiry list in the tool the owner already uses and mark each row that has no next step. The useful output is that marked list. The task is done when the saved list identifies each record with no next step. The setup required is access to that existing tool. If the owner cannot open it, the note says access is blocked. That completes the access check. The cleanup task stays blocked. It is not completed cleanup.
+
+A founder-only or team-capacity answer means one pass over the current list. The task does not assign additional people.
+
+### Attribution cleanup
+
+The current module id is `attribution-cleanup`. Its catalog effort band is high. The page labels that band "Overall module effort."
+
+The measurement baseline this module needs is `kpi-baseline`: a written definition of the one result named by the selected primary goal, and one current number for that result, or an explicit statement that the number is not available. Hiding the catalog week labels did not put `kpi-baseline` ahead of attribution. In saas-reporting, attribution-cleanup is still the first module in Days 1–30, and kpi-baseline is still later in that same phase.
+
+The starting note can be written before a usable baseline exists. Write the one result the selected goal is supposed to count, list each report the owner already opens, and mark every report that does not define that result. Record a current number, or write "number unavailable." The useful output is that marked list. The note is complete when it contains a written outcome definition and either a current number or an explicit "number unavailable" entry. Writing "number unavailable" documents the gap. It does not establish a usable baseline. The prerequisite sits beside this action: deeper attribution and channel ROI stay blocked until the definition and a current number both exist. The setup required is access to reports the owner already opens. The goal supplies the result in the owner's words:
+
+- Increase Bookings / Appointments: a booked appointment.
+- Generate More Leads: a new inquiry.
+- Improve Retention / LTV: a repeat customer or repeat purchase.
+- Launch: a first inquiry or first order. A pre-launch stage means the business has not gone live.
+- Understand Marketing ROI: the note says the intake has not supplied a number that ties a result to spend.
+- Build Brand Awareness: the note says the intake has not supplied a visibility measure.
+
+An attribution model, channel ROI, and a budget recommendation wait until the baseline note has both the definition and a current number. A missing number stays a gap. The task does not fill that gap with an estimate.
+
+### D15 and the service CTA
+
+The primary button and mailto are chosen from the service title, not from the first scheduled module.
+
+| Plan | First scheduled module | Service CTA | Does the CTA support that first action? |
+|---|---|---|---|
+| clinic-bookings | Website conversion. The drafted output is the three-line page note. | "Discuss local growth," because the service branch chooses Local SEO. | No. The button opens a local-growth conversation. |
+| manual-workflow | CRM cleanup. The drafted output is the inquiry list. CRM scores 18 and website conversion scores 6. | "Book a website strategy review." | No. The button opens a website conversation. |
+| saas-reporting | Attribution cleanup, still ahead of kpi-baseline. The drafted output is the measurement gap list. | "Talk through your reporting gaps." The service title is Attribution / Reporting Cleanup. | The topic matches the module. The button still reads as an attribution fix, while the drafted task stops at the baseline gap. Week-label removal did not change this order. |
+| D15 bookings plus ROI | Website conversion is the highest-scored module, at 14. | "Discuss local growth." The engagement is the measurement baseline, and the opening summary starts with ROI. | No. The page offers three different next steps. |
+| D15 retention plus conversion | Lifecycle email scores 15. | "Book a website strategy review." | No. The button follows the conversion branch. |
+
+Focused follow-up, still open after this content was accepted: choose the primary button and mailto subject from the first scheduled module's artifact before writing starting guidance for the other seven modules. For these three drafts the labels would be "Review the page note from this plan," "Review the inquiry list from this plan," and "Review the measurement gap list." The service card, engagement title, and D15 branch order stay where they are. This follow-up does not decide whether the service card itself should later match that artifact. That question remains the D15 coherence review before a public pilot. Scheduling attribution after the baseline remains the open D02 limitation.
+
+On the local results page checked October 24, 2026, the visible button text was "Book a strategy conversation" because no public booking URL was set. The mailto subject and body still came from the service title. The manual-workflow href, read in the browser, used subject "Website / conversion strategy — roadmap follow-up" while the starting action was the inquiry list. Clinic and saas-reporting use the same CTA map, so their subjects remain the local-growth and attribution subjects. None of those messages named the starting-action artifact.
+
+### Bounded implementation plan
+
+Accepted and implemented locally on October 24, 2026, with the refinements at the top of this decision. Uncommitted. The CTA follow-up above was not included.
+
+1. Add a pure helper that reads the first scheduled module id and the validated answers. Return the starting task, the artifact, the completion check, the access it needs, and the module's existing effort band. Implement the three module ids above. Any other id returns no first-action block.
+2. Render that block once, above the top-three cards. Print uses the same results component. Add the same four lines to the email model so the summary describes the same artifact. Keep the current module outcome bullets, and label them as later work in the module so they do not read as the finish line for the first task.
+3. Leave score weights, module selection, phase slicing, and the service, engagement, and summary branch order unchanged. The CTA follow-up above is a separate change after this content is accepted.
+4. Tests to add with the implementation: clinic produces the website note and keeps its Local SEO service title; a `none` channel case does not claim live traffic; manual-workflow produces the inquiry list; a `none` stack case does not require a CRM; saas-reporting names `kpi-baseline`, keeps attribution ahead of that baseline, and withholds channel ROI until a definition and a current number exist. Compare the 12 demos with the CMO-005 fixture and preserve its hash. Service titles stay the same.
+5. Stay outside this implementation: new questions, hour estimates, staff or budget assumptions, prerequisite reordering, channel-specific strategy, guidance for the other seven modules, and a visual redesign.
+
+Reconsider if Jacob wants the first action to follow the service card instead of the first scheduled module, wants hour estimates, or wants attribution held until the baseline exists. The last of those remains D02.

@@ -1,3 +1,5 @@
+// Node tests render this file with the classic JSX runtime. Next's compiler uses the automatic runtime.
+import React from 'react';
 import {
   Body,
   Button,
@@ -27,6 +29,7 @@ export interface RoadmapEmailProps extends RoadmapEmailModel {
 export default function RoadmapEmail({
   recipientFirstName,
   companyLine,
+  startingAction,
   topPriorities,
   sequencingNote,
   phases,
@@ -66,6 +69,41 @@ export default function RoadmapEmail({
             Below is a concise, scannable overview of your deterministic plan. For full module detail
             and explainability, revisit your results page or the share link you used.
           </Text>
+
+          {startingAction ? (
+            <>
+              <Heading as="h2" style={h2}>
+                Starting action
+              </Heading>
+              <Text style={strongLine}>{startingAction.moduleTitle}</Text>
+              <Text style={label}>Task</Text>
+              <Text style={paragraph}>{startingAction.task}</Text>
+              <Text style={label}>Output to keep</Text>
+              <Text style={paragraph}>{startingAction.output}</Text>
+              <Text style={label}>Completion</Text>
+              <Text style={paragraph}>{startingAction.completion}</Text>
+              <Text style={label}>Access</Text>
+              <Text style={paragraph}>{startingAction.access}</Text>
+              {startingAction.scopeNote ? (
+                <>
+                  <Text style={label}>Scope</Text>
+                  <Text style={paragraph}>{startingAction.scopeNote}</Text>
+                </>
+              ) : null}
+              <Text style={paragraph}>
+                {startingAction.effortLabel}: {startingAction.effortBand}. This band describes the
+                whole module, not this starting task.
+              </Text>
+              {startingAction.prerequisite ? (
+                <>
+                  <Heading as="h2" style={h2}>
+                    Before deeper analysis
+                  </Heading>
+                  <Text style={paragraph}>{startingAction.prerequisite}</Text>
+                </>
+              ) : null}
+            </>
+          ) : null}
 
           <Heading as="h2" style={h2}>
             Top 3 priorities

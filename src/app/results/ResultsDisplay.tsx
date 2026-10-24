@@ -8,6 +8,7 @@ import { buildMailtoHref, SERVICE_PATH_NOTE } from '@/lib/rules';
 import BrandWordmark from '@/components/brand/BrandWordmark';
 import { springEntrance } from '@/lib/motion';
 import { PHASE_WINDOW_NOTE, schedulePhaseViews } from '@/lib/schedule-presentation';
+import { startingActionForRoadmap } from '@/lib/starting-action';
 import ResultsLeadForm from './ResultsLeadForm';
 import ResultsToolbar from './ResultsToolbar';
 import styles from './page.module.css';
@@ -58,6 +59,7 @@ export default function ResultsDisplay({
     primaryCta,
   } = roadmap;
   const schedule = schedulePhaseViews(roadmap);
+  const startingAction = startingActionForRoadmap(roadmap);
 
   const mailtoHref = buildMailtoHref(primaryCta, [
     `Primary service: ${primaryService.title}`,
@@ -124,6 +126,61 @@ export default function ResultsDisplay({
             </div>
           </motion.section>
 
+          {startingAction && (
+            <motion.section
+              className={styles.startingSection}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...springEntrance, delay: 0.09 }}
+            >
+              <span className={styles.sectionTag}>First action</span>
+              <h2 className={styles.sectionTitle}>Starting action</h2>
+              <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>
+                {startingAction.moduleTitle}. Do this before the later work in the module.
+              </p>
+              <div
+                className={
+                  startingAction.prerequisite ? styles.startingLayout : styles.startingLayoutSingle
+                }
+              >
+                <div className={styles.startingMain}>
+                  <div className={styles.startingLabel}>Task</div>
+                  <p className={styles.startingBody}>{startingAction.task}</p>
+                  <div className={styles.startingLabel}>Output to keep</div>
+                  <p className={styles.startingBody}>{startingAction.output}</p>
+                  <div className={styles.startingLabel}>Completion</div>
+                  {startingAction.completionStates.map((state) => (
+                    <div key={state.id} className={styles.startingState}>
+                      <div className={styles.startingStateLabel}>{state.label}</div>
+                      <p className={styles.startingBody}>{state.requirement}</p>
+                    </div>
+                  ))}
+                  <div className={styles.startingLabel}>Access</div>
+                  <p className={styles.startingBody}>{startingAction.access}</p>
+                  {startingAction.scopeNote && (
+                    <>
+                      <div className={styles.startingLabel}>Scope</div>
+                      <p className={styles.startingBody}>{startingAction.scopeNote}</p>
+                    </>
+                  )}
+                  <p className={styles.startingEffort}>
+                    {startingAction.effortLabel}:{' '}
+                    {startingAction.effort.charAt(0).toUpperCase() + startingAction.effort.slice(1)}.
+                    This band describes the whole module, not this starting task.
+                  </p>
+                </div>
+                {startingAction.prerequisite && (
+                  <aside className={styles.startingPrerequisite}>
+                    <div className={styles.startingLabel}>Before deeper analysis</div>
+                    <p className={styles.startingBody}>{startingAction.prerequisite.summary}</p>
+                    <p className={styles.startingBody}>{startingAction.prerequisite.gapVersusBaseline}</p>
+                    <p className={styles.startingBody}>{startingAction.prerequisite.blockedWork}</p>
+                  </aside>
+                )}
+              </div>
+            </motion.section>
+          )}
+
           <motion.section
             className={styles.prioritiesSection}
             initial={{ opacity: 0, y: 24 }}
@@ -176,12 +233,18 @@ export default function ResultsDisplay({
                                 <div className={styles.moduleTitle}>{mod.title}</div>
                                 <div className={styles.moduleMeta}>
                                   <span className={EFFORT_CLASS[mod.effort]}>
-                                    {mod.effort.charAt(0).toUpperCase() + mod.effort.slice(1)} effort
+                                    {startingAction?.moduleId === mod.id
+                                      ? `${startingAction.effortLabel}: ${mod.effort.charAt(0).toUpperCase() + mod.effort.slice(1)}`
+                                      : `${mod.effort.charAt(0).toUpperCase() + mod.effort.slice(1)} effort`}
                                   </span>
                                 </div>
                               </div>
                               <p className={styles.moduleDescription}>{mod.description}</p>
-                              <div className={styles.outcomesLabel}>Expected outcomes</div>
+                              <div className={styles.outcomesLabel}>
+                                {startingAction?.moduleId === mod.id
+                                  ? startingAction.laterProgramLabel
+                                  : 'Expected outcomes'}
+                              </div>
                               <ul className={styles.outcomesList}>
                                 {mod.outcomes.map((outcome) => (
                                   <li key={outcome} className={styles.outcomeItem}>
