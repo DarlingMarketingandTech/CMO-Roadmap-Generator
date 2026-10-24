@@ -28,6 +28,7 @@ export default function RoadmapEmail({
   recipientFirstName,
   companyLine,
   topPriorities,
+  sequencingNote,
   phases,
   primaryServiceTitle,
   primaryServiceBlurb,
@@ -78,8 +79,9 @@ export default function RoadmapEmail({
           </Section>
 
           <Heading as="h2" style={h2}>
-            90-day roadmap by phase
+            Suggested sequencing by phase
           </Heading>
+          <Text style={mutedParagraph}>{sequencingNote}</Text>
           {phases.map((phase) => (
             <Section key={phase.phaseLabel} style={phaseBlock}>
               <Text style={phaseTitle}>
@@ -93,6 +95,7 @@ export default function RoadmapEmail({
                   • {t}
                 </Text>
               ))}
+              {phase.emptyMessage ? <Text style={mutedParagraph}>{phase.emptyMessage}</Text> : null}
             </Section>
           ))}
 

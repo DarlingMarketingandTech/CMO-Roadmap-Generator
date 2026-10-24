@@ -150,3 +150,42 @@ Recorded October 23, 2026 on `cmo-003-invalid-link-handling`, from CMO-002 commi
 | Browser check of the 404 view on that server | View rendered; "Take the Assessment" navigated to `/intake`; a valid compact link rendered the clinic roadmap | Local desktop browser only; no keyboard, mobile, or print review |
 
 Status policy chosen in this change: a results URL whose roadmap input is missing or fails the shared intake contract is a document that does not exist, so the page calls `notFound()` and Next.js serves HTTP 404 from `src/app/results/not-found.tsx`. A rendered page cannot carry a 4xx status any other way in the App Router; the email route keeps HTTP 400. Known limitation: the 404 view's markup arrives in the streamed flight payload and renders client-side, so it needs JavaScript, unlike the fully server-rendered 200 roadmap pages. The no-JavaScript fallback remains an open UX item per the product brief.
+
+## CMO-004 local verification
+
+Recorded October 24, 2026 on `cmo-004-consistent-roadmap-scheduling`, from CMO-003 commit `d6c64cfbee48f7cd471edd76ef9f7204204ef82f`. The diff was reviewed against D02 and this record and committed locally. Environment: Windows, Node 22.23.2, npm 10.9.8. D02 was accepted before this change. No email was sent. Actual PDF printing, dark-theme print readability, and email delivery remain unverified.
+
+The CMO-003 projection is unchanged. `src/lib/fixtures/demo-roadmap-baseline-cmo003.json` is still the key-sorted full roadmap JSON for the twelve demos, and its SHA-256 is still `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14`.
+
+The CMO-004 projection uses the same method on the new composer output. `src/lib/fixtures/demo-roadmap-baseline-cmo004.json` hashes to `6c51827e741cb5c4d49280829ff96cea8e5816eae8d96eb1cf7cea6c554eb217`. Catalog `week` strings remain on the module objects inside both files. Results, print, and email no longer render them. The hash change is the omitted modules below, not a relabel of the retained modules.
+
+Semantic differences from the CMO-003 roadmap JSON:
+
+| Demo | What changed |
+|---|---|
+| clinic-bookings | Phase 3 omits brand-strategy. email-automation stays. Founder placement of the other five modules is unchanged. |
+| local-visibility | Phase 2 omits brand-strategy. Phase 3 omits gtm-planning and martech-audit and is empty. Phase 1 still holds website-conversion, crm-cleanup, and local-seo. |
+| ecom-conversion | Phase 3 omits brand-strategy and gtm-planning and is empty. The six positive modules stay in the previous 3 / 3 groups. |
+| ecom-traffic-gap | Same module omission and placement as ecom-conversion. |
+| manual-workflow | Phase 3 omits brand-strategy. kpi-baseline stays in that phase. |
+| healthcare-booking-ux | Phase 3 omits brand-strategy. attribution-cleanup stays in that phase. |
+| home-services-local | Phase 3 omits brand-strategy. kpi-baseline stays in that phase. |
+| saas-reporting | Module placement unchanged. attribution-cleanup remains the first Phase 1 module, ahead of kpi-baseline. No prerequisite was added. |
+| law-differentiation | Module placement unchanged. |
+| law-reputation-site | Module placement unchanged. |
+| saas-growth-blind | Module placement unchanged. |
+| prelaunch-brand | Module placement unchanged. conversion-optimization and email-automation stay unselected. The engagement title is still "Positioning & GTM sprint (2–3 weeks)". |
+
+For the five unchanged demos, `composeRoadmap` deep-equals the CMO-003 entry. Their screen, print, and email copy still changes: catalog weeks are hidden, and the phase section says the windows are suggested sequencing. Omitted modules are absent from the email as well. They are not listed as later work. Service titles, engagement titles, scores, and score floors were not edited.
+
+| Check | Observed result | Limits |
+|---|---|---|
+| `npm test` | 14 passed, 0 failed | 7 intake tests and 7 schedule tests. The schedule tests cover positive-score omission, stable order and phase placement, empty phases, phase-window labels, email parity, the unresolved attribution order, and both baseline hashes. |
+| `npm run typecheck` | Passed | `tsc --noEmit --incremental false` |
+| `npm run build` | Passed; Next.js 15.5.28 | Buildability only. `.env.local` was present and was not read. |
+| Clinic results on local `next start` port 3456 | Phase windows Days 1–30, 31–60, and 61–90. Website conversion shows High effort and no week. Brand strategy is absent. The sequencing sentence is visible. The sprint title is still "Local growth program (90 days)". | Desktop browser on the local production server. Not Vercel. |
+| Ecommerce results on that server | Conversion optimization remains first. Phase 3 shows "No additional priorities recommended for this phase based on your answers." Brand strategy and go-to-market planning are absent. No catalog week is in the page text. | Same desktop session. |
+| Print media on the clinic page | Toolbar computed `display: none`. Print title "CMO Roadmap Generator — 90-Day Plan" computed `display: block`. Sequencing note, Days 1–30, and High effort remained. No catalog week and no brand strategy in the page text. | Emulated print CSS, not an operating-system print dialog, PDF, or light-theme print review. The phase cards stayed on the dark theme. |
+| Email HTML for the two demos | Not rendered in a standalone script. The shared schedule view test asserts the email model matches phase labels, day windows, titles, and the empty-phase sentence, and that the view contains no "Week " label. The production build compiled the template. | No provider send. JSX for the template is compiled by Next, and a one-off `tsx` render failed because React was not in scope. |
+
+The page heading, print document title, email subject, and layout description still use the 90-day product name. The phase section, on screen and in the email model, says the day ranges are suggested sequencing and not guaranteed completion dates. Mobile, keyboard, and a real print or PDF pass remain open.

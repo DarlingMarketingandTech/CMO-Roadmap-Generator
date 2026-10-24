@@ -7,6 +7,7 @@ import { getClientBookingPrimaryHref } from '@/lib/booking-url';
 import { buildMailtoHref } from '@/lib/rules';
 import BrandWordmark from '@/components/brand/BrandWordmark';
 import { springEntrance } from '@/lib/motion';
+import { PHASE_WINDOW_NOTE, schedulePhaseViews } from '@/lib/schedule-presentation';
 import ResultsLeadForm from './ResultsLeadForm';
 import ResultsToolbar from './ResultsToolbar';
 import styles from './page.module.css';
@@ -16,12 +17,6 @@ interface ResultsDisplayProps {
   /** Canonical compact token for the validated answers shown in this roadmap. */
   roadmapToken: string;
 }
-
-const PHASE_LABELS: Record<number, string> = {
-  1: 'Phase 1',
-  2: 'Phase 2',
-  3: 'Phase 3',
-};
 
 const PHASE_HEADER_CLASS: Record<1 | 2 | 3, string> = {
   1: styles.phaseHeader1,
@@ -49,7 +44,6 @@ export default function ResultsDisplay({
   roadmapToken,
 }: ResultsDisplayProps) {
   const {
-    phases,
     topPriorities,
     primaryService,
     secondaryService,
@@ -63,6 +57,7 @@ export default function ResultsDisplay({
     industrySegment,
     primaryCta,
   } = roadmap;
+  const schedule = schedulePhaseViews(roadmap);
 
   const mailtoHref = buildMailtoHref(primaryCta, [
     `Primary service: ${primaryService.title}`,
@@ -136,10 +131,9 @@ export default function ResultsDisplay({
             transition={{ ...springEntrance, delay: 0.1 }}
           >
             <span className={styles.sectionTag}>Immediate focus</span>
-            <h2 className={styles.sectionTitle}>Top 3 priorities (next 30 days)</h2>
+            <h2 className={styles.sectionTitle}>Top 3 priorities</h2>
             <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>
-              These are the highest-scored initiatives for your profile — execute in order before
-              expanding scope.
+              These are the highest-scored initiatives for your profile, in priority order.
             </p>
             <div className={styles.prioritiesGrid}>
               {topPriorities.map((title, i) => (
@@ -158,46 +152,50 @@ export default function ResultsDisplay({
             transition={{ ...springEntrance, delay: 0.14 }}
           >
             <span className={styles.sectionTag}>Roadmap</span>
-            <h2 className={styles.sectionTitle}>90-day execution by phase</h2>
+            <h2 className={styles.sectionTitle}>Suggested sequencing by phase</h2>
+            <p className={`${styles.leadIntro} ${styles.phaseWindowNote}`}>{PHASE_WINDOW_NOTE}</p>
 
             <div className={styles.phasesTimeline}>
-              {phases.map((phase) => (
-                <div key={phase.phase} className={styles.phaseBlock}>
-                  <div className={PHASE_HEADER_CLASS[phase.phase as 1 | 2 | 3]}>
-                    <div>
-                      <div className={styles.phaseLabel}>{PHASE_LABELS[phase.phase]}</div>
-                      <div className={styles.phaseName}>{phase.title}</div>
-                    </div>
-                    <div className={styles.phaseDays}>{phase.days}</div>
-                  </div>
-
-                  <div className={styles.phaseModules}>
-                    {phase.modules.map((mod) => (
-                      <div key={mod.id} className={styles.moduleCard}>
-                        <div className={styles.moduleHeader}>
-                          <div className={styles.moduleTitle}>{mod.title}</div>
-                          <div className={styles.moduleMeta}>
-                            <span className={styles.moduleWeek}>{mod.week}</span>
-                            <span className={EFFORT_CLASS[mod.effort]}>
-                              {mod.effort.charAt(0).toUpperCase() + mod.effort.slice(1)} effort
-                            </span>
-                          </div>
-                        </div>
-                        <p className={styles.moduleDescription}>{mod.description}</p>
-                        <div className={styles.outcomesLabel}>Expected outcomes</div>
-                        <ul className={styles.outcomesList}>
-                          {mod.outcomes.map((outcome) => (
-                            <li key={outcome} className={styles.outcomeItem}>
-                              <span className={styles.outcomeDot} />
-                              {outcome}
-                            </li>
-                          ))}
-                        </ul>
+              {schedule.map((phase) => (
+                  <div key={phase.phase} className={styles.phaseBlock}>
+                    <div className={PHASE_HEADER_CLASS[phase.phase]}>
+                      <div>
+                        <div className={styles.phaseLabel}>{phase.phaseLabel}</div>
+                        <div className={styles.phaseName}>{phase.title}</div>
                       </div>
-                    ))}
+                      <div className={styles.phaseDays}>{phase.days}</div>
+                    </div>
+
+                    <div className={styles.phaseModules}>
+                      {phase.modules.length === 0 ? (
+                        <p className={styles.phaseEmpty}>{phase.emptyMessage}</p>
+                      ) : (
+                        phase.modules.map((mod) => (
+                            <div key={mod.id} className={styles.moduleCard}>
+                              <div className={styles.moduleHeader}>
+                                <div className={styles.moduleTitle}>{mod.title}</div>
+                                <div className={styles.moduleMeta}>
+                                  <span className={EFFORT_CLASS[mod.effort]}>
+                                    {mod.effort.charAt(0).toUpperCase() + mod.effort.slice(1)} effort
+                                  </span>
+                                </div>
+                              </div>
+                              <p className={styles.moduleDescription}>{mod.description}</p>
+                              <div className={styles.outcomesLabel}>Expected outcomes</div>
+                              <ul className={styles.outcomesList}>
+                                {mod.outcomes.map((outcome) => (
+                                  <li key={outcome} className={styles.outcomeItem}>
+                                    <span className={styles.outcomeDot} />
+                                    {outcome}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </motion.section>
 

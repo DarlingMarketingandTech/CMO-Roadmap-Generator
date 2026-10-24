@@ -33,9 +33,9 @@ Acceptance: page, copied link and email input agree for q-only, legacy-only and 
 
 ### CMO-004 / P1 / Real sequencing and consistent week labels
 
-Select dependency-aware dates versus priority-only groups. Move displayed schedule metadata into assigned work. Add clear deferred work.
+Status on October 24, 2026: reviewed against D02 and the validation record and committed locally on `cmo-004-consistent-roadmap-scheduling`, from CMO-003 commit `d6c64cfbee48f7cd471edd76ef9f7204204ef82f`. The commit SHA is recorded in the session handoff. No push or deployment. Actual PDF printing, dark-theme print readability, and email delivery remain unverified.
 
-Acceptance: clinic-bookings, ecom-conversion and prelaunch-brand no longer render impossible phase/week combinations; prerequisites respected; no filler solely to hit six/eight; owner-reviewed examples. Depends on schedule decision D02.
+Results and print show the assigned phase window and the existing effort band. Catalog weeks are not displayed. Modules with a final score at or below zero are omitted, not listed as later work. Positive-score order and founder/non-founder phase placement stay. Empty phases remain visible. Web, print, and email share that placement. Attribution before the KPI baseline is still unresolved. The CMO-003 hash is unchanged. The CMO-004 hash is recorded beside it. See the validation record.
 
 ### CMO-005 / P1 / Reconcile signals, industry and commercial branches
 
