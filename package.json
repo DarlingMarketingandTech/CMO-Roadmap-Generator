@@ -11,7 +11,7 @@
     "build": "next build",
     "start": "next start",
     "typecheck": "tsc --noEmit --incremental false",
-    "test": "tsx --test src/lib/intake-answers.test.ts src/lib/schedule.test.ts"
+    "test": "tsx --test src/lib/intake-answers.test.ts src/lib/schedule.test.ts src/lib/recommendations.test.ts"
   },
   "dependencies": {
     "@react-email/components": "^1.0.10",

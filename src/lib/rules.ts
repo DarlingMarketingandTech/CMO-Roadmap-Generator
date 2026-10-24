@@ -552,8 +552,8 @@ export function getPrimaryCta(
 
   if (segment === 'healthcare') {
     intro += ' Context: healthcare / regulated marketing.';
-  } else if (segment === 'legal') {
-    intro += ' Context: legal / professional services.';
+  } else if (segment === 'professional') {
+    intro += ' Context: professional services.';
   } else if (segment === 'saas') {
     intro += ' Context: B2B SaaS.';
   } else if (segment === 'ecommerce') {
@@ -594,8 +594,8 @@ export function buildExecutiveSummary(
   const segHint =
     segment === 'healthcare'
       ? 'Patient trust, scheduling UX, and local discovery are treated as revenue-critical.'
-      : segment === 'legal'
-        ? 'Authority and inquiry quality take precedence over raw traffic volume.'
+      : segment === 'professional'
+        ? 'Authority and inquiry quality take precedence over raw traffic volume. The intake does not name a profession, so the plan does not assume one.'
         : segment === 'local'
           ? 'Near-me visibility and frictionless contact paths anchor the first 30 days.'
           : segment === 'saas'
@@ -640,9 +640,13 @@ export function buildWatchOuts(
   if (segment === 'healthcare') {
     w.push('Avoid campaigns that outpace your scheduling capacity — ads that overfill or under-deliver on access erode trust fast.');
     w.push('Keep claims and patient stories aligned with regulatory and ethics norms; let proof come from structure, not hype.');
-  } else if (segment === 'legal') {
-    w.push('Do not optimize for lead volume if matter quality drops — tune CTAs and intake for the cases you actually want.');
-    w.push('Long consideration cycles mean nurture and credibility assets matter; avoid purely transactional messaging.');
+  } else if (segment === 'professional') {
+    w.push(
+      'Do not optimize for inquiry volume if the quality of the work drops — tune calls to action and intake for the engagements you want.',
+    );
+    w.push(
+      'Long consideration cycles mean nurture and credibility matter; avoid purely transactional messaging.',
+    );
   } else if (segment === 'local') {
     w.push('Neglecting Google Business Profile and reviews while buying ads usually wastes budget — fix the local baseline first.');
     w.push('If phone and form leads are your lifeblood, track source-level performance; “more traffic” without attribution hides what works.');
@@ -671,6 +675,17 @@ export function buildWatchOuts(
 // Narrative: long-form + bullets for print/PDF
 // -----------------------------------------------------------------------------
 
+/** Solid or advanced maturity plus a messy-stack bottleneck. The answers disagree. */
+function stackAnswersConflict(answers: IntakeAnswers): boolean {
+  return (
+    answers.bottleneck === 'messy-stack' &&
+    (answers.stackMaturity === 'solid' || answers.stackMaturity === 'advanced')
+  );
+}
+
+export const SERVICE_PATH_NOTE =
+  'These service suggestions follow a fixed order of your answers. They can name different work than the highest-scored modules.';
+
 export function generateWhyThisRoadmap(
   flags: Flags,
   answers: IntakeAnswers,
@@ -698,7 +713,9 @@ export function generateWhyThisRoadmap(
     );
   } else if (flags.hasMessyStack) {
     parts.push(
-      'Cleaning up your marketing stack early will unlock better data, reduce wasted spend, and make every future initiative significantly more effective.',
+      stackAnswersConflict(answers)
+        ? 'You named a disorganized marketing stack as the bottleneck, while also reporting the stack as solid or advanced. Those answers disagree. This plan follows the bottleneck and raises MarTech and CRM work rather than treating the stack as settled.'
+        : 'Cleaning up your marketing stack early will unlock better data, reduce wasted spend, and make every future initiative significantly more effective.',
     );
   } else if (flags.needsROIClarity) {
     parts.push(
@@ -726,9 +743,20 @@ export function generateWhyThisRoadmap(
     );
   }
 
+  if (flags.needsBookings && flags.isLocalOrHealthcare && flags.needsROIClarity) {
+    parts.push(
+      'Bookings and ROI clarity are both in your answers. The service path follows bookings. The engagement and the opening summary follow ROI clarity. Those are separate rules, not one score.',
+    );
+  }
+  if (answers.primaryGoal === 'retention' && flags.needsConversionLift) {
+    parts.push(
+      'Retention is the goal and conversion is the bottleneck. The service and engagement follow the conversion bottleneck. Lifecycle email still receives weight from the retention goal.',
+    );
+  }
+
   if (flags.isFounderOnly) {
     parts.push(
-      'Your roadmap has been streamlined to six focused modules — realistic for a founder-led team — so you can execute with full commitment rather than spreading yourself thin across too many fronts.',
+      'Your roadmap is capped for a founder-led team so the work stays within solo bandwidth rather than spreading across every possible initiative.',
     );
   } else {
     parts.push(
@@ -748,7 +776,11 @@ export function generateWhySummaryBullets(flags: Flags, answers: IntakeAnswers):
     bullets.push('Messaging and positioning were treated as the root constraint — everything else builds on that clarity.');
   }
   if (flags.hasMessyStack) {
-    bullets.push('Stack and data hygiene scored high so future campaigns and reporting rest on reliable foundations.');
+    bullets.push(
+      stackAnswersConflict(answers)
+        ? 'The bottleneck says the stack is disorganized, while maturity says it is solid or advanced. The plan follows the bottleneck and raises MarTech and CRM work.'
+        : 'A disorganized stack raises MarTech and CRM work so later campaigns rest on reliable data.',
+    );
   }
   if (flags.needsROIClarity) {
     bullets.push('Measurement and attribution moved up so you can defend spend and reallocate budget with confidence.');
@@ -810,7 +842,9 @@ export function buildInfluentialAnswers(answers: IntakeAnswers, flags: Flags): I
     {
       questionLabel: 'Biggest bottleneck',
       answerLabel: optionLabel('bottleneck', answers.bottleneck),
-      impact: BOTTLENECK_IMPACT[answers.bottleneck],
+      impact: stackAnswersConflict(answers)
+        ? 'The bottleneck is a disorganized stack, even though maturity is not reported as messy. The plan follows the bottleneck and raises MarTech audit and CRM cleanup. These answers are in tension.'
+        : BOTTLENECK_IMPACT[answers.bottleneck],
     },
     {
       questionLabel: 'Primary 90-day goal',
@@ -823,9 +857,11 @@ export function buildInfluentialAnswers(answers: IntakeAnswers, flags: Flags): I
       impact:
         flags.isLocalOrHealthcare && flags.needsBookings
           ? 'Local or healthcare context pairs with booking goals to emphasize local SEO and conversion.'
-          : flags.isEcommerce
+          :         flags.isEcommerce
             ? 'E-commerce context adds weight to conversion, merchandising, and lifecycle touches.'
-            : 'Informs tone and channel mix inside the phased plan.',
+            : answers.businessType === 'professional-service'
+              ? 'Professional services covers several professions. The plan uses that shared category and does not assume one of them.'
+              : 'Informs tone and channel mix inside the phased plan.',
     },
     {
       questionLabel: 'Stage',
@@ -857,7 +893,9 @@ export function buildInfluentialAnswers(answers: IntakeAnswers, flags: Flags): I
     rows.push({
       questionLabel: 'Stack maturity',
       answerLabel: optionLabel('stackMaturity', answers.stackMaturity),
-      impact: 'Messy or absent tooling triggers MarTech and CRM prioritization.',
+      impact: stackAnswersConflict(answers)
+        ? 'Maturity and the bottleneck disagree. The plan follows the bottleneck and still raises MarTech and CRM work.'
+        : 'Messy or absent tooling triggers MarTech and CRM prioritization.',
     });
   }
 

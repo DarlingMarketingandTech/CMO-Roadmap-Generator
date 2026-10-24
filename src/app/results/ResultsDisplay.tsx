@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { motion } from 'motion/react';
 import type { IndustrySegment, Roadmap } from '@/lib/types';
 import { getClientBookingPrimaryHref } from '@/lib/booking-url';
-import { buildMailtoHref } from '@/lib/rules';
+import { buildMailtoHref, SERVICE_PATH_NOTE } from '@/lib/rules';
 import BrandWordmark from '@/components/brand/BrandWordmark';
 import { springEntrance } from '@/lib/motion';
 import { PHASE_WINDOW_NOTE, schedulePhaseViews } from '@/lib/schedule-presentation';
@@ -32,7 +32,7 @@ const EFFORT_CLASS: Record<'low' | 'medium' | 'high', string> = {
 
 const SEGMENT_COPY: Record<IndustrySegment, string> = {
   healthcare: 'Healthcare / regulated marketing lens',
-  legal: 'Legal & professional services lens',
+  professional: 'Professional services lens',
   local: 'Local service business lens',
   saas: 'B2B SaaS lens',
   ecommerce: 'E-commerce / DTC lens',
@@ -277,10 +277,7 @@ export default function ResultsDisplay({
           >
             <span className={styles.sectionTag}>Commercial path</span>
             <h2 className={styles.sectionTitle}>Recommended service path</h2>
-            <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>
-              Primary and supporting services follow your scores and vertical lens — tuned for how
-              buyers evaluate and convert in your category.
-            </p>
+            <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>{SERVICE_PATH_NOTE}</p>
             <div className={styles.servicesGrid}>
               <div className={styles.serviceCardPrimary}>
                 <div className={styles.serviceBadge}>Primary</div>

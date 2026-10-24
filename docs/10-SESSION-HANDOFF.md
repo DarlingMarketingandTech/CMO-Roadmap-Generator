@@ -1,6 +1,6 @@
 # Next-session handoff
 
-Updated October 24, 2026 after the uncommitted CMO-004 scheduling change. This file is the short continuation entry point.
+Updated October 24, 2026 after the local CMO-005 checkpoint. This file is the short continuation entry point.
 
 ## Current state
 
@@ -8,21 +8,23 @@ Canonical working copy: `C:\dev\CMO-Roadmap-Generator`. CMO-001 is local commit 
 
 CMO-003 was reviewed against the validation record and committed locally as `d6c64cfbee48f7cd471edd76ef9f7204204ef82f` on `cmo-003-invalid-link-handling`. No push, deployment, pull request, or email was created.
 
-CMO-004 was reviewed against D02 and the validation record and committed locally on `cmo-004-consistent-roadmap-scheduling`. No push, deployment, pull request, or email was created. Actual PDF printing, dark-theme print readability, and email delivery remain unverified.
+CMO-004 was reviewed against D02 and the validation record and committed locally as `ce45be53cc44643a7251076ac0ca30ea881683fa` on `cmo-004-consistent-roadmap-scheduling`. No push, deployment, pull request, or email was created. Actual PDF printing, dark-theme print readability, and email delivery remain unverified.
 
-A results URL with missing or malformed roadmap input now returns HTTP 404 through `notFound()` and `src/app/results/not-found.tsx`. The view says the link is invalid or incomplete, keeps the `?q=`/`?answers=` hint, and routes back to `/intake`. Valid compact links, valid legacy links, and the invalid-q fallback to valid legacy answers still return 200. The plans they render now follow the CMO-004 sequencing rule. The email route still returns 400 for a bad token; its copy now says invalid or incomplete because nothing in a token expires.
+CMO-005 was reviewed against its acceptance criteria and committed locally on `cmo-005-reconcile-recommendations`, from that CMO-004 commit. Professional Services uses general language. A disorganized-stack bottleneck raises MarTech and CRM work even when maturity is solid, and the plan says the answers disagree. The service card no longer claims to follow the scores. D15 records the unchanged service, engagement, and summary order. That disagreement stays a product limitation and needs a coherence review before a public pilot.
 
-CMO-004 checks on Node 22.23.2 and npm 10.9.8: `npm test` 14 passed; `npm run typecheck` passed; `npm run build` passed on Next.js 15.5.28. A local production server showed the clinic and ecommerce plans, including an emulated print pass. The CMO-003 demo hash remains `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14`. The CMO-004 hash is `6c51827e741cb5c4d49280829ff96cea8e5816eae8d96eb1cf7cea6c554eb217`. The per-demo differences are in the validation record.
+A results URL with missing or malformed roadmap input returns HTTP 404 through `notFound()` and `src/app/results/not-found.tsx`. Valid compact links, valid legacy links, and the invalid-q fallback to valid legacy answers still return 200. The plans they render follow the CMO-004 sequencing rule. The email route still returns 400 for a bad token.
+
+The CMO-003 demo hash remains `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14`. The CMO-004 hash remains `6c51827e741cb5c4d49280829ff96cea8e5816eae8d96eb1cf7cea6c554eb217`. The CMO-005 hash is `451f240ca9e2a62ae9db73047817a0940b6f6738f00a36e667818ef243f7472b`. The per-demo differences are in the validation record.
 
 ## Active milestone
 
-CMO-004 is committed locally. The next item is CMO-005. Phase windows are suggested sequencing. Modules scored at or below zero are omitted rather than carried as later work. Positive-score order and phase placement are unchanged. Attribution before the KPI baseline is still unresolved. Do not start a redesign, Next 16, a database, or an AI service.
+CMO-005 is committed locally. Phase windows remain suggested sequencing. Modules scored at or below zero stay omitted. Attribution before the KPI baseline is still unresolved. Bookings-versus-ROI and retention-versus-conversion were not reordered. D15 needs a coherence review before a public pilot. The next item is CMO-006. Do not start a redesign, Next 16, a database, or an AI service.
 
 ## First actions
 
-1. Review the uncommitted CMO-004 diff. The founder example is clinic-bookings. The non-founder example is ecom-conversion.
-2. Keep the branch unpushed.
-3. Keep both demo hashes. `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14` is the pre-change baseline. `6c51827e741cb5c4d49280829ff96cea8e5816eae8d96eb1cf7cea6c554eb217` is the CMO-004 baseline.
+1. Start CMO-006 on a new branch from the CMO-005 commit. Keep this branch unpushed.
+2. Keep all three demo hashes. Do not overwrite `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14` or `6c51827e741cb5c4d49280829ff96cea8e5816eae8d96eb1cf7cea6c554eb217`.
+3. Leave service precedence and scheduling unchanged while drafting the first action.
 
 ## Known traps
 
@@ -35,7 +37,9 @@ CMO-004 is committed locally. The next item is CMO-005. Phase windows are sugges
 - The CMO-003 demo hash still includes catalog weeks inside the saved roadmap JSON. The page no longer renders those strings. The hash is not evidence that attribution waits for a KPI baseline.
 - saas-reporting still places attribution-cleanup ahead of kpi-baseline. That limitation is recorded, not solved.
 - The results 404 view renders from the streamed flight payload and needs JavaScript. The no-JavaScript fallback is still open.
+- Professional Services still cannot tell law, accounting, consulting, and finance apart. The plan uses general language. It does not add a profession question.
+- Honoring a messy-stack bottleneck also blocks the embedded engagement format. That side effect is recorded in the validation note.
 
 ## Decisions and external actions
 
-D01 remains open. D12's 15.x patch is the CMO-001 commit above; Next 16 remains deferred. D13 records the CMO-002 channel normalization. D14 records the CMO-003 invalid-link status policy and is committed locally as `d6c64cfbee48f7cd471edd76ef9f7204204ef82f`. D02 is accepted and implemented locally; the CMO-004 diff is uncommitted. No push, deployment, or message was performed. Keep credentials and personal submissions out of this file.
+D01 remains open. D12's 15.x patch is the CMO-001 commit above; Next 16 remains deferred. D13 records the CMO-002 channel normalization. D14 records the CMO-003 invalid-link status policy and is committed locally as `d6c64cfbee48f7cd471edd76ef9f7204204ef82f`. D02 is accepted and committed locally as `ce45be53cc44643a7251076ac0ca30ea881683fa`. D15 records the service-branch order with CMO-005. The disagreement remains a product limitation. PDF printing, dark-theme print readability, and email delivery remain unverified. No push, deployment, or message was performed. Keep credentials and personal submissions out of this file.

@@ -27,6 +27,7 @@ This document separates confirmed task direction from proposals. Do not mark imp
 | D12 | Framework upgrade strategy? | Patch supported 15.x first, isolate any major upgrade from policy changes. Recheck support/advisories when starting. | 15.5.28 patch committed locally as `77413607aed8630c717c768052e2a2d7dfa7236f`. Next 16 remains deferred. |
 | D13 | How should imperfect channel lists be read? | Empty or omitted channels mean `none`. Reject duplicates and `none` mixed with real channels. Store surviving channels in compact-codec order so the share token decodes to the displayed answers. | Implemented with CMO-002. Scoring and week labels were not changed. |
 | D14 | What HTTP status should an invalid results link return? | A missing or malformed roadmap input is a document that does not exist: HTTP 404 via `notFound()` with a helpful results-segment view and a route back to intake. The email route keeps 400. Links never expire, so error copy says invalid or incomplete. | Implemented with CMO-003 and committed locally. Valid and fallback links stay 200. |
+| D15 | When should the service card follow the scored modules? | Keep the existing service, engagement, and summary branch order. Say so when bookings and ROI, or retention and conversion, both apply. Do not claim the service follows the scores. | Recorded with CMO-005. The false score claim is removed and the split is explained. The disagreement remains a product limitation and needs a coherence review before a public pilot. Service order was not changed. |
 
 None of these choices needs to block source review, fixtures or a dependency assessment. Ask only when the actual work depends on the answer.
 
@@ -154,3 +155,19 @@ Do this only after the proposal is accepted. One behavior change, then tests, th
 ### Reconsider when
 
 Reconsider if Jacob wants the day ranges removed, wants attribution to wait for a KPI baseline, or wants effort translated into hours. Any of those is a different decision. Privacy impact is none: the change recomputes the same synthetic and user-supplied answers and does not add storage. The cost is a changed plan body in email and on screen for every demo whose week label or filler module is visible today.
+
+## D15 — Service order and scored priorities
+
+Decision ID: D15. Date: October 24, 2026. Owner: Jacob. Status: **recorded with CMO-005 and committed locally. The branch order is unchanged. The false “follow your scores” claim is removed and the split is stated in the plan. Explaining the disagreement makes it transparent. The recommendation still needs a coherence review before a public pilot.**
+
+The service card, the engagement, and the opening summary are three separate first-match lists. They are not derived from the highest-scored module. CMO-005 does not reorder them. Two combinations show why a reorder would be a business-policy choice rather than a correction of the answers.
+
+A healthcare business whose goal is Increase Bookings / Appointments and whose bottleneck is Lack of Reporting / ROI Visibility gets three different leads. Local SEO scores 12. Attribution scores 13 and website conversion scores 14, so Local SEO is not the highest-scored module. The service path still chooses Local SEO because bookings is checked before ROI. The engagement is “Measurement baseline + attribution roadmap” and the opening summary starts with ROI, because those two lists check ROI before bookings. The plan now says that split in plain language.
+
+A business whose goal is Improve Retention / LTV and whose bottleneck is Poor Conversion Rates has lifecycle email at 15 and website conversion at 10. The service is still Website Redesign & Conversion UX and the engagement is still “CRO workstream + test backlog,” because conversion is checked before the retention goal. The plan says the commercial path follows the conversion bottleneck and that lifecycle email still receives weight from the retention goal.
+
+The manual-workflow demo is the same kind of split. CRM scores 18 and MarTech scores 15, while website conversion scores 6. The service remains Website Redesign because more-leads is checked before team-capacity workflow relief. The engagement remains “Lead engine blueprint workshop” for the same reason. That order stays until an owner chooses a different precedence.
+
+The results and print sentence is: “These service suggestions follow a fixed order of your answers. They can name different work than the highest-scored modules.” The email template never claimed the services follow the scores. It still shows the service titles the branch lists choose.
+
+Reconsider if Jacob wants one of these lists to follow the top scored module, or wants bookings and ROI, or retention and conversion, to share one winner. Prerequisite edges, channel-specific strategy, and a new profession question are separate decisions.

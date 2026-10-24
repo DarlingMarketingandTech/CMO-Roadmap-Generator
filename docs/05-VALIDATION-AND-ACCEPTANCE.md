@@ -189,3 +189,43 @@ For the five unchanged demos, `composeRoadmap` deep-equals the CMO-003 entry. Th
 | Email HTML for the two demos | Not rendered in a standalone script. The shared schedule view test asserts the email model matches phase labels, day windows, titles, and the empty-phase sentence, and that the view contains no "Week " label. The production build compiled the template. | No provider send. JSX for the template is compiled by Next, and a one-off `tsx` render failed because React was not in scope. |
 
 The page heading, print document title, email subject, and layout description still use the 90-day product name. The phase section, on screen and in the email model, says the day ranges are suggested sequencing and not guaranteed completion dates. Mobile, keyboard, and a real print or PDF pass remain open.
+
+## CMO-005 local verification
+
+Recorded October 24, 2026 on `cmo-005-reconcile-recommendations`, from CMO-004 commit `ce45be53cc44643a7251076ac0ca30ea881683fa`. Reviewed against the CMO-005 acceptance criteria and committed locally. Environment: Windows, Node 22.23.2, npm 10.9.8. No email was sent. Actual PDF printing, dark-theme print readability, and email delivery remain unverified. D15 remains a product limitation pending a coherence review before a public pilot.
+
+`src/lib/fixtures/demo-roadmap-baseline-cmo003.json` is unchanged and still hashes to `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14`. `src/lib/fixtures/demo-roadmap-baseline-cmo004.json` is unchanged and still hashes to `6c51827e741cb5c4d49280829ff96cea8e5816eae8d96eb1cf7cea6c554eb217`. The CMO-005 projection uses the same key-sorted method. `src/lib/fixtures/demo-roadmap-baseline-cmo005.json` hashes to `451f240ca9e2a62ae9db73047817a0940b6f6738f00a36e667818ef243f7472b`.
+
+Scores, module order, phase placement, service titles, and engagement titles are unchanged for all 12 demos. The professional-services score bumps are the same numbers previously applied under the legal segment. They are not specific to one profession, so the two professional demos keep their module order.
+
+| Demo | What changed against the CMO-004 roadmap |
+|---|---|
+| clinic-bookings | The founder sentence no longer says the roadmap was streamlined to six modules. This plan schedules five. Service, engagement, scores, and module order are unchanged. |
+| home-services-local | Same founder-sentence correction only. |
+| manual-workflow | Same founder-sentence correction. The stack bullet no longer says hygiene “scored high.” It says a disorganized stack raises MarTech and CRM work. CRM still scores 18, MarTech 15, and website conversion 6. The service remains Website Redesign because the lead-generation branch is still checked first. |
+| prelaunch-brand | Founder sentence, plus the same stack-bullet correction. Module order and the engagement title are unchanged. |
+| saas-reporting | Only the stack bullet. It no longer claims the stack “scored high.” Attribution remains ahead of the KPI baseline. |
+| law-differentiation | Segment id is `professional` rather than `legal`. Module descriptions, watch-outs, the closing sentence, the business-type explanation, the executive summary, and the contact intro use general professional-services language. The secondary service no longer says “retained work.” Module order, scores, and service titles are unchanged. |
+| law-reputation-site | Same language change as law-differentiation. |
+| local-visibility | Unchanged. |
+| ecom-conversion | Unchanged. |
+| ecom-traffic-gap | Unchanged. |
+| healthcare-booking-ux | Unchanged. |
+| saas-growth-blind | Unchanged. |
+
+Plain-language cases, each covered by `src/lib/recommendations.test.ts`:
+
+- An accounting or consulting business can only choose Professional Services. That option also lists law and finance. The plan now says the intake does not identify a profession. It does not say attorney, matter, case, or bar.
+- A business with stack maturity “Solid but Could Be Better” and bottleneck “Disorganized Marketing Stack” previously left MarTech at zero while the bottleneck sentence said it raised MarTech. MarTech now scores 9 and CRM scores 12, both are scheduled, and the plan says the two answers disagree and that it follows the bottleneck. If maturity is actually messy, the plan does not call the answers a conflict. The same bottleneck also blocks the embedded-format path, because that path requires a stack the rules treat as disciplined. None of the 12 demos use this combination.
+- Bookings plus ROI, and retention plus conversion, keep the branch order in D15. The service note no longer says the suggestions follow the scores.
+
+The email model changes only where the roadmap service description changes. That is the secondary blurb on the two professional demos. Clinic and the other demos keep the same email titles, phase placement, and blurbs. This is not a delivery test.
+
+| Check | Observed result | Limits |
+|---|---|---|
+| `npm test` | 18 passed, 0 failed | 7 intake, 7 schedule, and 4 recommendation tests. Schedule tests still lock the CMO-003 and CMO-004 files. Recommendation tests lock the CMO-005 file and the three cases above. |
+| `npm run typecheck` | Passed | `tsc --noEmit --incremental false` |
+| `npm run build` | Passed; Next.js 15.5.28 | Buildability only. `.env.local` was present and was not read. |
+| Law-differentiation results on local `next start` port 3456 | Segment reads “Professional services lens.” Module copy uses that lens. The summary says the intake does not name a profession. Watch-outs talk about inquiry quality and consideration cycles. No attorney, matter, case, bar, or “legal” wording was in the page text. The service note says the suggestions follow a fixed order and can name different work than the highest-scored modules. | Desktop browser on the local production server. Not a PDF or email delivery test. |
+| Clinic results on that server | The narrative says the roadmap is capped for a founder-led team. It does not say six modules. Brand strategy is absent. The sprint title is still “Local growth program (90 days).” The same service note is visible. | Same desktop session. |
+| Solid-stack / messy-bottleneck results on that server | CRM cleanup is scheduled, then email, then MarTech audit. The narrative says the answers disagree and the plan follows the bottleneck. The bullet and the bottleneck explanation both say the answers are in tension. The service card remains the lead-generation website path, and the note says that can differ from the highest-scored modules. | Same desktop session. One synthetic profile, not one of the 12 demos. |

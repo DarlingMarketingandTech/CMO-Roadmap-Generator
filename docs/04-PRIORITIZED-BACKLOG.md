@@ -33,15 +33,19 @@ Acceptance: page, copied link and email input agree for q-only, legacy-only and 
 
 ### CMO-004 / P1 / Real sequencing and consistent week labels
 
-Status on October 24, 2026: reviewed against D02 and the validation record and committed locally on `cmo-004-consistent-roadmap-scheduling`, from CMO-003 commit `d6c64cfbee48f7cd471edd76ef9f7204204ef82f`. The commit SHA is recorded in the session handoff. No push or deployment. Actual PDF printing, dark-theme print readability, and email delivery remain unverified.
+Status on October 24, 2026: reviewed against D02 and the validation record and committed locally as `ce45be53cc44643a7251076ac0ca30ea881683fa` on `cmo-004-consistent-roadmap-scheduling`, from CMO-003 commit `d6c64cfbee48f7cd471edd76ef9f7204204ef82f`. No push or deployment. Actual PDF printing, dark-theme print readability, and email delivery remain unverified.
 
 Results and print show the assigned phase window and the existing effort band. Catalog weeks are not displayed. Modules with a final score at or below zero are omitted, not listed as later work. Positive-score order and founder/non-founder phase placement stay. Empty phases remain visible. Web, print, and email share that placement. Attribution before the KPI baseline is still unresolved. The CMO-003 hash is unchanged. The CMO-004 hash is recorded beside it. See the validation record.
 
 ### CMO-005 / P1 / Reconcile signals, industry and commercial branches
 
+Status on October 24, 2026: reviewed against the acceptance criteria and committed locally on `cmo-005-reconcile-recommendations`, from CMO-004 commit `ce45be53cc44643a7251076ac0ca30ea881683fa`. No push or deployment. D15 stays a product limitation: the page explains the service-card disagreement, and that disagreement still needs a coherence review before a public pilot.
+
+Professional Services no longer maps to a law practice. A disorganized-stack bottleneck raises MarTech and CRM work even when maturity is solid or advanced, and the plan says those answers disagree. The service card no longer says it follows the scores. Bookings-versus-ROI and retention-versus-conversion keep their existing branch order; D15 records that order and the plans now state it. Prerequisite ordering, channel-specific strategy, new intake questions, and visual redesign were not part of this change. Actual PDF printing, dark-theme print readability, and email delivery remain unverified.
+
 Fix messy-stack bottleneck handling; avoid mapping every professional-service user to legal; align service/engagement explanations with selected work through stable IDs and explicit precedence.
 
-Acceptance: accountant/consultant fixtures avoid legal-case language; messy-bottleneck/solid-stack case is honored or explicitly explained as conflicting evidence; bookings+ROI and retention+conversion cases have reviewed outcomes; no “follow your scores” claim for an unrelated branch.
+Acceptance: accountant/consultant fixtures avoid legal-case language; messy-bottleneck/solid-stack case is honored or explicitly explained as conflicting evidence; bookings+ROI and retention+conversion cases have reviewed outcomes; no “follow your scores” claim for an unrelated branch. The local checks are in the validation record. The commercial branch order itself was not changed.
 
 ## Next: useful results and dependable requests
 

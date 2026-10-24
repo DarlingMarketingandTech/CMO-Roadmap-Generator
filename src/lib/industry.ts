@@ -12,7 +12,7 @@ export function resolveIndustrySegment(answers: IntakeAnswers): IndustrySegment 
     case 'healthcare':
       return 'healthcare';
     case 'professional-service':
-      return 'legal';
+      return 'professional';
     case 'local-service':
       return 'local';
     case 'b2b-saas':
@@ -42,7 +42,7 @@ export function applyIndustryScoreAdjustments(
         bump('website-conversion', 2);
       }
       break;
-    case 'legal':
+    case 'professional':
       bump('brand-strategy', 4);
       bump('website-conversion', 4);
       bump('crm-cleanup', 3);
@@ -87,8 +87,8 @@ const MODULE_LENS: Partial<
   'brand-strategy': {
     healthcare:
       'Healthcare lens: balance empathy and clinical credibility; align messaging with intake realities and privacy expectations.',
-    legal:
-      'Professional services lens: sharpen practice-area authority, ethics-safe claims, and clear “why us vs. any firm” differentiation.',
+    professional:
+      'Professional services lens: sharpen the offer people can repeat, keep claims within professional standards, and make the difference from other providers clear.',
     local:
       'Local lens: tie positioning to geography, reputation, and the specific jobs customers hire you to do in your market.',
     saas:
@@ -99,8 +99,8 @@ const MODULE_LENS: Partial<
   'gtm-planning': {
     healthcare:
       'Healthcare lens: prioritize referral loops, provider co-marketing where appropriate, and compliant channel choices.',
-    legal:
-      'Legal lens: weight referral, content, and owned channels that support trust before the first consult.',
+    professional:
+      'Professional services lens: weight referral, content, and owned channels that build trust before the first conversation.',
     local:
       'Local lens: emphasize map pack, service-area targeting, and seasonal demand patterns.',
     saas:
@@ -111,8 +111,8 @@ const MODULE_LENS: Partial<
   'website-conversion': {
     healthcare:
       'Healthcare lens: streamline appointment requests, mobile-first UX, insurance/location clarity, and trust markers (providers, outcomes, compliance).',
-    legal:
-      'Legal lens: improve inquiry quality with practice-specific CTAs, intake forms, and credibility paths (cases, bars, process).',
+    professional:
+      'Professional services lens: improve inquiry quality with service-specific calls to action, intake forms, and credibility paths such as credentials, process, and proof.',
     local:
       'Local lens: reduce friction from “near me” click to call, form, or book — especially on mobile.',
     saas:
@@ -123,8 +123,8 @@ const MODULE_LENS: Partial<
   'local-seo': {
     healthcare:
       'Healthcare lens: GBP clinical categories, review velocity with policy care, and location-specific landing pages.',
-    legal:
-      'Legal lens: office-location strategy, local intent keywords, and map visibility for high-intent searches.',
+    professional:
+      'Professional services lens: office or service-area visibility, local-intent search, and map presence for people ready to inquire.',
     local:
       'Local lens: citations, service-area pages, and review generation tied to completed jobs.',
     saas: 'SaaS lens: still useful if you sell regionally; otherwise treat as lighter priority within this module.',
@@ -134,8 +134,8 @@ const MODULE_LENS: Partial<
   'crm-cleanup': {
     healthcare:
       'Healthcare lens: align lead sources to scheduling systems; reduce dropped new-patient inquiries.',
-    legal:
-      'Legal lens: track matter types and intake quality so marketing feeds the right cases.',
+    professional:
+      'Professional services lens: track service types and inquiry quality so marketing reaches the work you want.',
     local:
       'Local lens: connect call tracking, form fills, and job booking to a single timeline.',
     saas:
@@ -146,8 +146,8 @@ const MODULE_LENS: Partial<
   'kpi-baseline': {
     healthcare:
       'Healthcare lens: measure cost per booked appointment, show-up rate, and source-level volume within privacy constraints.',
-    legal:
-      'Legal lens: tie marketing to qualified consults and retained matters — not just raw leads.',
+    professional:
+      'Professional services lens: tie marketing to qualified conversations and accepted work, not just raw inquiries.',
     saas:
       'SaaS lens: instrument funnel from trial to expansion; cohort reporting by segment.',
     ecommerce:
@@ -160,8 +160,8 @@ const MODULE_LENS: Partial<
       'E-commerce lens: reconcile ad platforms, Shopify/analytics, and email for a single revenue story.',
     healthcare:
       'Healthcare lens: attribute to booked care where possible; separate brand vs. performance cleanly.',
-    legal:
-      'Legal lens: connect intake source to matter quality so spend follows profitable cases.',
+    professional:
+      'Professional services lens: connect inquiry source to the quality of the work so spend follows the engagements you want.',
   },
   'email-automation': {
     ecommerce:
@@ -170,15 +170,15 @@ const MODULE_LENS: Partial<
       'SaaS lens: onboarding activation, expansion triggers, and churn-risk plays.',
     healthcare:
       'Healthcare lens: appointment reminders and education sequences within compliance norms.',
-    legal:
-      'Legal lens: nurture that respects long consideration cycles and ethics rules.',
+    professional:
+      'Professional services lens: nurture that respects long consideration cycles and professional standards.',
   },
   'conversion-optimization': {
     ecommerce:
       'E-commerce lens: test PDP, cart, offers, and shipping thresholds — not just homepage.',
     saas: 'SaaS lens: optimize trial-to-paid, upgrade paths, and pricing page clarity.',
-    legal:
-      'Professional services lens: test headline specificity, attorney proof, and form length vs. lead quality.',
+    professional:
+      'Professional services lens: test headline specificity, credible proof, and form length against inquiry quality.',
     local:
       'Local lens: call vs. form vs. book — match how your customers actually convert.',
   },
@@ -187,8 +187,8 @@ const MODULE_LENS: Partial<
       'SaaS lens: prioritize product analytics, CRM, and marketing automation connectivity.',
     healthcare:
       'Healthcare lens: PHI-aware tools, scheduling integrations, and marketing-safe data flows.',
-    legal:
-      'Legal lens: intake, call tracking, and case management handoffs.',
+    professional:
+      'Professional services lens: intake, call tracking, and handoff into the system that holds client work.',
     ecommerce:
       'E-commerce lens: pixel/server-side tracking, feed tools, and ESP alignment.',
   },
@@ -222,9 +222,9 @@ export function refineServiceCopyForIndustry(
       p: ' Emphasis: trust, scheduling UX, and local discovery that respects regulatory tone.',
       s: ' Pair with clear intake routing and baseline metrics you can defend internally.',
     },
-    legal: {
+    professional: {
       p: ' Emphasis: authority, differentiation, and inquiry quality — not vanity traffic.',
-      s: ' Support with CRM discipline so you see which marketing actually produces retained work.',
+      s: ' Support with CRM discipline so you see which marketing produces the work you want to keep.',
     },
     local: {
       p: ' Emphasis: Google Business Profile, local pack, and “click-to-call / book” friction.',
@@ -263,8 +263,8 @@ export function getIndustryClosingSentence(
   switch (segment) {
     case 'healthcare':
       return 'Through a healthcare lens, we biased the plan toward trust, scheduling clarity, and measurable patient acquisition — not just traffic.';
-    case 'legal':
-      return 'For a legal practice, the roadmap leans on authority, differentiation, and inquiry quality so marketing supports the matters you actually want.';
+    case 'professional':
+      return 'For a professional-services business, the roadmap leans on authority, differentiation, and inquiry quality. The intake does not identify a profession, so the plan uses general professional-services language.';
     case 'local':
       return 'As a local service business, near-me visibility, reputation, and low-friction contact paths are treated as revenue infrastructure.';
     case 'saas':
