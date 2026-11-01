@@ -399,9 +399,7 @@ export function getEngagementFormatRecommendation(
   const hasBench =
     answers.teamCapacity === 'dedicated-marketer' || answers.teamCapacity === 'full-team';
   const matureStage =
-    answers.businessStage === 'growth' ||
-    answers.businessStage === 'established' ||
-    answers.businessStage === 'enterprise';
+    answers.businessStage === 'growth' || answers.businessStage === 'established';
 
   // Many high-priority tracks → sequenced project beats “always-on” embedded
   if (strong >= 6) {

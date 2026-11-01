@@ -23,11 +23,13 @@ This document separates confirmed task direction from proposals. Do not mark imp
 | D08 | AI role? | No requirement in the initial release. Test only a defined comprehension/evidence problem with constrained outputs. | Deferred |
 | D09 | Public license? | Owner chooses deliberately after checking rights; source visibility alone is insufficient. | Open before open-source release |
 | D10 | Brand/name and services? | Match the selected current LLC site; use stable service IDs separate from labels. | Open before presentation/integration |
-| D11 | Inquiry choices? | One reliable email request plus a real discussion link; remove stubs. | Proposed for immediate cleanup |
+| D11 | Inquiry choices? | One reliable email request plus a real discussion link; remove stubs. | Implemented with CMO-007 on November 1, 2026: the two stub intents are removed, the email request is the only form action, and the discussion link defaults to the website contact page. Superseded in part by D18. |
 | D12 | Framework upgrade strategy? | Patch supported 15.x first, isolate any major upgrade from policy changes. Recheck support/advisories when starting. | 15.5.28 patch committed locally as `77413607aed8630c717c768052e2a2d7dfa7236f`. Next 16 remains deferred. |
 | D13 | How should imperfect channel lists be read? | Empty or omitted channels mean `none`. Reject duplicates and `none` mixed with real channels. Store surviving channels in compact-codec order so the share token decodes to the displayed answers. | Implemented with CMO-002. Scoring and week labels were not changed. |
 | D14 | What HTTP status should an invalid results link return? | A missing or malformed roadmap input is a document that does not exist: HTTP 404 via `notFound()` with a helpful results-segment view and a route back to intake. The email route keeps 400. Links never expire, so error copy says invalid or incomplete. | Implemented with CMO-003 and committed locally. Valid and fallback links stay 200. |
 | D15 | When should the service card follow the scored modules? | Keep the existing service, engagement, and summary branch order. Say so when bookings and ROI, or retention and conversion, both apply. Do not claim the service follows the scores. | Recorded with CMO-005. The false score claim is removed and the split is explained. The disagreement remains a product limitation and needs a coherence review before a public pilot. Service order was not changed. |
+| D17 | How should the stage question read for owner-led businesses? | Four plain-language stages with no revenue bands. Drop Enterprise; old links decode it as Established. | Accepted November 1, 2026 and implemented with CMO-007. See D17 below. |
+| D18 | Should the full plan be gated behind an email request? | Results page shows a short version; the full plan is sent only by email, with a consult link and an owner lead copy. | Accepted November 1, 2026 by Jacob and implemented with CMO-007. Overrides the AGENTS.md "no signup" invariant for the full plan only. See D18 below. |
 | D16 | What concrete task should the first scheduled module ask the owner to do? | Show one starting task, the artifact it produces, a field-level completion check, and the access or prerequisite that task needs. The effort band is labeled overall module effort. Website conversion, CRM cleanup, and attribution cleanup only. Service order and phase order stay unchanged. The primary contact button and mailto subject follow that starting task. | Accepted October 24, 2026 with the refinements below. Starting guidance is local commit `530242db3e8c04f72d1c8d555f94bfacb27d9a8d`. Contact alignment is committed on `cmo-006-align-primary-cta`. |
 
 None of these choices needs to block source review, fixtures or a dependency assessment. Ask only when the actual work depends on the answer.
@@ -258,3 +260,40 @@ The starting-guidance steps below were accepted and committed locally on October
 5. Stay outside this implementation: new questions, hour estimates, staff or budget assumptions, prerequisite reordering, channel-specific strategy, guidance for the other seven modules, and a visual redesign.
 
 Reconsider if Jacob wants the first action to follow the service card instead of the first scheduled module, wants hour estimates, or wants attribution held until the baseline exists. The last of those remains D02.
+
+## D17 — Stage question for owner-led businesses
+
+Decision ID: D17. Date: November 1, 2026. Owner: Jacob. Status: **accepted and implemented with CMO-007.**
+
+The old stage options used ARR bands ("under $1M ARR", "$1M–$10M ARR", "$10M+ ARR") and an Enterprise option. That language fits software companies, not the owner-led local and professional businesses the website serves. Jacob approved this wording:
+
+| Stored value | Label | Description |
+|---|---|---|
+| `pre-launch` | Getting ready to open | Not taking customers yet |
+| `early` | Just getting started | Open, with a handful of customers; still learning what brings them in |
+| `growth` | Steady and ready to grow | Regular customers coming in; you want more of them |
+| `established` | Well established | Known in your market; you want to protect and sharpen what works |
+
+The question now reads "Where is your business today?"
+
+Scoring: the stored values and every rule that reads them are unchanged, except that `enterprise` is gone. It was only read by the engagement-format "mature stage" check, which still counts `growth` and `established`. All 12 demos keep identical scores, module order, phases, services, and engagement. The only output change is the stage label in `businessSummary.headline` and in the Stage row of `explainability.influentialAnswers`. Tests apply exactly that rename (`src/lib/fixtures/stage-label-change.ts`) before comparing with the CMO-003, CMO-004, and CMO-005 baselines. Those fixture files are unchanged byte-for-byte. The new baseline is `src/lib/fixtures/demo-roadmap-baseline-cmo007.json`, SHA-256 `a9f21063b4a7f238c8ad0f649da645c0efc64b1f46908fe3ba87eaab14a30091`.
+
+Old links: compact tokens keep stage indexes 0–3. Index 4 (`enterprise`) and the legacy word `enterprise` both decode as `established`, and the link re-encodes with index 3. Index 5 and above are still rejected. This changes the plan for an old enterprise link in two places that only `established` triggers: the SaaS email-automation bump in `industry.ts` and the brand-clarity diagnosis route in the engagement format. That is accepted: Enterprise is no longer an audience the tool claims to serve.
+
+Reconsider if Jacob wants a revenue or headcount question, or if pilot owners cannot place themselves in one of the four stages.
+
+## D18 — Short version on the page, full plan by email
+
+Decision ID: D18. Date: November 1, 2026. Owner: Jacob. Status: **accepted and implemented with CMO-007.**
+
+Jacob asked for the tool to work as lead generation: show a short version of the result, ask for contact details, email the full result, and include a consult link in that email. He chose the strict version: the page and share links show only the short version.
+
+This overrides the AGENTS.md invariant "Keep planning accessible without a signup" for the full plan only. The intake and the short version still need no signup.
+
+- **Short version (page and share links):** business headline, executive summary, industry lens, top 3 priorities, and the D16 starting action. `src/lib/roadmap-preview.ts` builds it on the server. `src/app/results/page.tsx` passes only that object to the client component, so the full plan is not in the page HTML or the RSC payload. A test checks all 12 demos for leaked module descriptions, outcomes, service descriptions, reasoning, and watch-outs.
+- **Full plan (email only):** every scheduled module with effort, description, and outcomes (the starting module's outcomes stay labeled "Later work in this module"), the reasoning and influential answers, services with full descriptions, engagement path and program shape, and watch-outs. This reverses the D16 rule that the email omits later outcomes. The email is still recomputed server-side from the answer token.
+- **Consult link:** the email button says "Request a consult" and links to the website contact page (`https://darling-martech-website-project-v4.vercel.app/contact` until the domain moves). A booking URL can replace it later through `STRATEGY_BOOKING_URL`. The page keeps the D16 starting-task button labels.
+- **Lead copy:** when `LEAD_NOTIFY_EMAIL` is set, Jacob receives one email per request with the name, email, business name, the seven answers, and the top 3 priorities. Reply-to is the visitor. A failed copy is logged without personal details and does not fail the visitor's request. Nothing is stored in a database. The form tells the visitor that Darling MarTech receives a copy only when that setting is present.
+- **Print:** the page no longer offers Print. The emailed plan is the complete document.
+
+Costs: delivery now carries the whole value of the tool. Resend must use a verified sending domain before launch, and a delivery failure leaves the visitor with only the short version and the contact link. Reconsider if pilot completion of the email step is low, if owners object to the gate, or when Jacob has a scheduling link for the consult button.

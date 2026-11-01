@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
+import { withCmo007StageLabels } from './fixtures/stage-label-change';
 import React from 'react';
 import { render } from '@react-email/render';
 import { contactForRoadmap } from './contact-cta';
@@ -94,7 +95,7 @@ describe('CMO-006 starting actions', () => {
       const current = plan(id);
       const previous = saved.find((entry) => entry.id === id)?.roadmap;
       assert.ok(previous);
-      assert.deepEqual(current, previous, id);
+      assert.deepEqual(current, withCmo007StageLabels(previous), id);
       assert.equal('startingAction' in current, false);
     }
   });

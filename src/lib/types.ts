@@ -12,8 +12,7 @@ export type BusinessStage =
   | 'pre-launch'
   | 'early'
   | 'growth'
-  | 'established'
-  | 'enterprise';
+  | 'established';
 
 export type PrimaryGoal =
   | 'more-leads'

@@ -29,8 +29,16 @@ export const STAGE_ORDER = [
   'early',
   'growth',
   'established',
-  'enterprise',
 ] as const satisfies readonly IntakeAnswers['businessStage'][];
+
+/**
+ * D17: `enterprise` is no longer offered. Old compact links store it at index 4
+ * and old legacy links store the word. Both decode as `established`.
+ * Encoding only uses STAGE_ORDER, so indexes 0–3 are unchanged.
+ */
+export const STAGE_DECODE_ORDER = [...STAGE_ORDER, 'enterprise'] as const;
+
+const LEGACY_STAGE_ALIASES = { enterprise: 'established' } as const;
 
 export const GOAL_ORDER = [
   'more-leads',
@@ -81,7 +89,9 @@ const REAL_CHANNELS = CHANNEL_ORDER.filter((channel) => channel !== 'none');
 export const intakeAnswersSchema = z
   .object({
     businessType: z.enum(BUSINESS_TYPE_ORDER),
-    businessStage: z.enum(STAGE_ORDER),
+    businessStage: z
+      .enum(STAGE_DECODE_ORDER)
+      .transform((stage) => (stage === 'enterprise' ? LEGACY_STAGE_ALIASES.enterprise : stage)),
     primaryGoal: z.enum(GOAL_ORDER),
     bottleneck: z.enum(BOTTLENECK_ORDER),
     activeChannels: z.array(z.enum(CHANNEL_ORDER)),

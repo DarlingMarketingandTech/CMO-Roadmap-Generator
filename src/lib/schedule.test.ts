@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
+import { withCmo007StageLabels } from './fixtures/stage-label-change';
 import { composeRoadmap } from './compose-roadmap';
 import { DEMO_PROFILES } from './demo-profiles';
 import { roadmapToEmailModel } from './email/roadmap-email-model';
@@ -123,7 +124,11 @@ describe('CMO-004 phase windows', () => {
       assert.equal(roadmap.engagementFormat.title, entry.roadmap.engagementFormat.title);
 
       if (entry.id === 'saas-growth-blind') {
-        assert.deepEqual(roadmap, entry.roadmap, `${entry.id} changed beyond selection`);
+        assert.deepEqual(
+          roadmap,
+          withCmo007StageLabels(entry.roadmap),
+          `${entry.id} changed beyond selection`,
+        );
       }
     }
   });

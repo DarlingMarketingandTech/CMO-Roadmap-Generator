@@ -8,6 +8,7 @@ import {
   MAX_CHANNEL_MASK,
   MAX_INTAKE_TOKEN_LENGTH,
   STACK_ORDER,
+  STAGE_DECODE_ORDER,
   STAGE_ORDER,
   TEAM_ORDER,
   canonicalizeIntakeAnswers,
@@ -120,7 +121,7 @@ export function decodeIntakeAnswersCompact(token: string): IntakeAnswers | null 
     const [, ti, si, gi, bi, bits, mi, ki] = arr;
     if (
       !isIntegralIndex(ti, BUSINESS_TYPE_ORDER.length) ||
-      !isIntegralIndex(si, STAGE_ORDER.length) ||
+      !isIntegralIndex(si, STAGE_DECODE_ORDER.length) ||
       !isIntegralIndex(gi, GOAL_ORDER.length) ||
       !isIntegralIndex(bi, BOTTLENECK_ORDER.length) ||
       !isIntegralIndex(mi, STACK_ORDER.length) ||
@@ -134,7 +135,7 @@ export function decodeIntakeAnswersCompact(token: string): IntakeAnswers | null 
     }
     return canonicalizeIntakeAnswers({
       businessType: BUSINESS_TYPE_ORDER[ti],
-      businessStage: STAGE_ORDER[si],
+      businessStage: STAGE_DECODE_ORDER[si],
       primaryGoal: GOAL_ORDER[gi],
       bottleneck: BOTTLENECK_ORDER[bi],
       activeChannels: bitmaskToChannels(bits),

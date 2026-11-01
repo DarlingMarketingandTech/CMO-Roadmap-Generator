@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
 import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
+import { withCmo007StageLabels } from './fixtures/stage-label-change';
 import { composeRoadmap } from './compose-roadmap';
 import { DEMO_PROFILES } from './demo-profiles';
 import { computeFlags } from './flags';
@@ -203,7 +204,7 @@ describe('CMO-005 recommendation correctness', () => {
       const current = composeRoadmap(profile.answers);
       assert.ok(before);
       assert.ok(saved);
-      assert.deepEqual(current, saved, profile.id);
+      assert.deepEqual(current, withCmo007StageLabels(saved), profile.id);
       assert.deepEqual(
         current.phases.map((phase) => phase.modules.map((mod) => mod.id)),
         before.phases.map((phase) => phase.modules.map((mod) => mod.id)),
@@ -216,7 +217,7 @@ describe('CMO-005 recommendation correctness', () => {
       assert.deepEqual(current.engagementFormat, before.engagementFormat);
 
       if ((UNCHANGED_DEMOS as readonly string[]).includes(profile.id)) {
-        assert.deepEqual(current, before, profile.id);
+        assert.deepEqual(current, withCmo007StageLabels(before), profile.id);
       }
     }
 
