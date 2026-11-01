@@ -14,6 +14,12 @@ const STARTING_CONTACT_LABELS = {
 const STARTING_PURPOSE =
   'This opens a conversation about that starting task. It does not save, attach, submit, or review a note, list, or baseline.';
 
+/** The full-plan email asks for a consult; the page keeps the starting-task label. */
+export const CONSULT_CTA_LABEL = 'Request a consult';
+
+export const CONSULT_CTA_PURPOSE =
+  'Want help putting this plan to work? Request a consult and we will set up a time to talk it through.';
+
 const FALLBACK_PURPOSE = 'This opens a strategy conversation about the plan.';
 
 export interface ContactConversation {

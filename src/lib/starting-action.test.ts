@@ -314,8 +314,11 @@ describe('CMO-006 starting actions', () => {
     assert.match(clinicHtml, /starting action/i);
     assert.match(clinicHtml, /Overall module effort/);
     assert.match(clinicHtml, /desired customer action/);
-    assert.equal(clinicHtml.includes('Full CRO audit completed'), false);
-    assert.equal(clinicHtml.includes('Later work in this module'), false);
+    // D18: the email is now the full plan. Later outcomes appear under the later-work label.
+    assert.ok(clinicHtml.includes('Later work in this module'));
+    assert.ok(
+      clinicHtml.indexOf('Later work in this module') < clinicHtml.indexOf('Full CRO audit completed'),
+    );
     assert.match(clinicHtml, /Discuss your page note/);
     assert.equal(clinicHtml.includes('Discuss local growth'), false);
     assert.equal(clinicHtml.includes('strategy@example.com'), false);
@@ -342,7 +345,11 @@ describe('CMO-006 starting actions', () => {
       { plainText: true },
     );
     assert.match(saasHtml, /before deeper analysis/i);
-    assert.equal(saasHtml.includes('ROI by channel calculated and benchmarked'), false);
+    // D18: the full-plan email lists attribution outcomes as later work, after the prerequisite.
+    assert.ok(
+      saasHtml.indexOf('Before deeper analysis') <
+        saasHtml.indexOf('ROI by channel calculated and benchmarked'),
+    );
 
     const noChannel = roadmapToEmailModel(plan('local-visibility'), 'Alex Example', null);
     assert.match(noChannel.startingAction?.task ?? '', /one request the first page should make/);
