@@ -1,3 +1,5 @@
+// Node tests render this file with the classic JSX runtime. Next's compiler uses the automatic runtime.
+import React from 'react';
 import {
   Body,
   Button,
@@ -11,6 +13,7 @@ import {
   Section,
   Text,
 } from '@react-email/components';
+import { CONTACT_UNAVAILABLE_MESSAGE } from '@/lib/contact-cta';
 import type { RoadmapEmailModel } from '@/lib/email/roadmap-email-model';
 
 const base = '#0A0A0A';
@@ -21,13 +24,17 @@ const muted = '#888888';
 const border = 'rgba(245, 240, 232, 0.12)';
 
 export interface RoadmapEmailProps extends RoadmapEmailModel {
-  strategyCtaUrl: string;
+  strategyCtaUrl: string | null;
+  strategyCtaLabel: string;
+  strategyCtaPurpose: string;
 }
 
 export default function RoadmapEmail({
   recipientFirstName,
   companyLine,
+  startingAction,
   topPriorities,
+  sequencingNote,
   phases,
   primaryServiceTitle,
   primaryServiceBlurb,
@@ -37,6 +44,8 @@ export default function RoadmapEmail({
   engagementPathRationale,
   sprintTitle,
   strategyCtaUrl,
+  strategyCtaLabel,
+  strategyCtaPurpose,
 }: RoadmapEmailProps) {
   return (
     <Html>
@@ -66,6 +75,41 @@ export default function RoadmapEmail({
             and explainability, revisit your results page or the share link you used.
           </Text>
 
+          {startingAction ? (
+            <>
+              <Heading as="h2" style={h2}>
+                Starting action
+              </Heading>
+              <Text style={strongLine}>{startingAction.moduleTitle}</Text>
+              <Text style={label}>Task</Text>
+              <Text style={paragraph}>{startingAction.task}</Text>
+              <Text style={label}>Output to keep</Text>
+              <Text style={paragraph}>{startingAction.output}</Text>
+              <Text style={label}>Completion</Text>
+              <Text style={paragraph}>{startingAction.completion}</Text>
+              <Text style={label}>Access</Text>
+              <Text style={paragraph}>{startingAction.access}</Text>
+              {startingAction.scopeNote ? (
+                <>
+                  <Text style={label}>Scope</Text>
+                  <Text style={paragraph}>{startingAction.scopeNote}</Text>
+                </>
+              ) : null}
+              <Text style={paragraph}>
+                {startingAction.effortLabel}: {startingAction.effortBand}. This band describes the
+                whole module, not this starting task.
+              </Text>
+              {startingAction.prerequisite ? (
+                <>
+                  <Heading as="h2" style={h2}>
+                    Before deeper analysis
+                  </Heading>
+                  <Text style={paragraph}>{startingAction.prerequisite}</Text>
+                </>
+              ) : null}
+            </>
+          ) : null}
+
           <Heading as="h2" style={h2}>
             Top 3 priorities
           </Heading>
@@ -78,8 +122,9 @@ export default function RoadmapEmail({
           </Section>
 
           <Heading as="h2" style={h2}>
-            90-day roadmap by phase
+            Suggested sequencing by phase
           </Heading>
+          <Text style={mutedParagraph}>{sequencingNote}</Text>
           {phases.map((phase) => (
             <Section key={phase.phaseLabel} style={phaseBlock}>
               <Text style={phaseTitle}>
@@ -93,6 +138,7 @@ export default function RoadmapEmail({
                   • {t}
                 </Text>
               ))}
+              {phase.emptyMessage ? <Text style={mutedParagraph}>{phase.emptyMessage}</Text> : null}
             </Section>
           ))}
 
@@ -120,19 +166,22 @@ export default function RoadmapEmail({
           <Hr style={hr} />
 
           <Section style={ctaBox}>
-            <Text style={ctaText}>
-              Ready to pressure-test this plan with your calendar and budget?
-            </Text>
-            <Text style={ctaSubline}>Walk through your roadmap on a short call — sequencing, tradeoffs, and what to fund first.</Text>
-            <Button href={strategyCtaUrl} style={button}>
-              Book a strategy conversation
-            </Button>
-            <Text style={footerNote}>
-              If the button does not work, copy this link:{' '}
-              <Link href={strategyCtaUrl} style={link}>
-                {strategyCtaUrl}
-              </Link>
-            </Text>
+            <Text style={ctaText}>{strategyCtaPurpose}</Text>
+            {strategyCtaUrl ? (
+              <>
+                <Button href={strategyCtaUrl} style={button}>
+                  {strategyCtaLabel}
+                </Button>
+                <Text style={footerNote}>
+                  If the button does not work, copy this link:{' '}
+                  <Link href={strategyCtaUrl} style={link}>
+                    {strategyCtaUrl}
+                  </Link>
+                </Text>
+              </>
+            ) : (
+              <Text style={ctaSubline}>{CONTACT_UNAVAILABLE_MESSAGE}</Text>
+            )}
           </Section>
 
           <Text style={disclaimer}>

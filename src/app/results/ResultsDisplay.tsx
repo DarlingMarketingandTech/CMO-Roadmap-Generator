@@ -3,26 +3,23 @@
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import type { IndustrySegment, Roadmap } from '@/lib/types';
-import { getClientBookingPrimaryHref } from '@/lib/booking-url';
-import { encodeIntakeAnswersCompact } from '@/lib/encode-answers';
-import { buildMailtoHref } from '@/lib/rules';
+import { CONTACT_UNAVAILABLE_MESSAGE, type ContactConversation } from '@/lib/contact-cta';
+import { SERVICE_PATH_NOTE } from '@/lib/rules';
 import BrandWordmark from '@/components/brand/BrandWordmark';
 import { springEntrance } from '@/lib/motion';
+import { PHASE_WINDOW_NOTE, schedulePhaseViews } from '@/lib/schedule-presentation';
+import { startingActionForRoadmap } from '@/lib/starting-action';
 import ResultsLeadForm from './ResultsLeadForm';
 import ResultsToolbar from './ResultsToolbar';
 import styles from './page.module.css';
 
 interface ResultsDisplayProps {
   roadmap: Roadmap;
-  shareQ?: string;
-  shareAnswersLegacy?: string;
+  /** Canonical compact token for the validated answers shown in this roadmap. */
+  roadmapToken: string;
+  /** Server-resolved conversation link. The label comes from the starting action. */
+  contact: ContactConversation;
 }
-
-const PHASE_LABELS: Record<number, string> = {
-  1: 'Phase 1',
-  2: 'Phase 2',
-  3: 'Phase 3',
-};
 
 const PHASE_HEADER_CLASS: Record<1 | 2 | 3, string> = {
   1: styles.phaseHeader1,
@@ -38,7 +35,7 @@ const EFFORT_CLASS: Record<'low' | 'medium' | 'high', string> = {
 
 const SEGMENT_COPY: Record<IndustrySegment, string> = {
   healthcare: 'Healthcare / regulated marketing lens',
-  legal: 'Legal & professional services lens',
+  professional: 'Professional services lens',
   local: 'Local service business lens',
   saas: 'B2B SaaS lens',
   ecommerce: 'E-commerce / DTC lens',
@@ -47,15 +44,10 @@ const SEGMENT_COPY: Record<IndustrySegment, string> = {
 
 export default function ResultsDisplay({
   roadmap,
-  shareQ,
-  shareAnswersLegacy,
+  roadmapToken,
+  contact,
 }: ResultsDisplayProps) {
-  const roadmapToken =
-    shareQ?.trim() ||
-    shareAnswersLegacy?.trim() ||
-    encodeIntakeAnswersCompact(roadmap.answers);
   const {
-    phases,
     topPriorities,
     primaryService,
     secondaryService,
@@ -69,16 +61,8 @@ export default function ResultsDisplay({
     industrySegment,
     primaryCta,
   } = roadmap;
-
-  const mailtoHref = buildMailtoHref(primaryCta, [
-    `Primary service: ${primaryService.title}`,
-    `Supporting: ${secondaryService.title}`,
-    `Engagement shape: ${engagementFormat.title}`,
-    `Sprint / program: ${recommendedEngagement.title}`,
-    `Top priorities: ${topPriorities.join('; ')}`,
-  ]);
-  const bookingPrimaryHref = getClientBookingPrimaryHref(mailtoHref);
-  const bookingIsHttp = /^https?:\/\//i.test(bookingPrimaryHref);
+  const schedule = schedulePhaseViews(roadmap);
+  const startingAction = startingActionForRoadmap(roadmap);
 
   return (
     <div className={styles.page}>
@@ -135,6 +119,61 @@ export default function ResultsDisplay({
             </div>
           </motion.section>
 
+          {startingAction && (
+            <motion.section
+              className={styles.startingSection}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ ...springEntrance, delay: 0.09 }}
+            >
+              <span className={styles.sectionTag}>First action</span>
+              <h2 className={styles.sectionTitle}>Starting action</h2>
+              <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>
+                {startingAction.moduleTitle}. Do this before the later work in the module.
+              </p>
+              <div
+                className={
+                  startingAction.prerequisite ? styles.startingLayout : styles.startingLayoutSingle
+                }
+              >
+                <div className={styles.startingMain}>
+                  <div className={styles.startingLabel}>Task</div>
+                  <p className={styles.startingBody}>{startingAction.task}</p>
+                  <div className={styles.startingLabel}>Output to keep</div>
+                  <p className={styles.startingBody}>{startingAction.output}</p>
+                  <div className={styles.startingLabel}>Completion</div>
+                  {startingAction.completionStates.map((state) => (
+                    <div key={state.id} className={styles.startingState}>
+                      <div className={styles.startingStateLabel}>{state.label}</div>
+                      <p className={styles.startingBody}>{state.requirement}</p>
+                    </div>
+                  ))}
+                  <div className={styles.startingLabel}>Access</div>
+                  <p className={styles.startingBody}>{startingAction.access}</p>
+                  {startingAction.scopeNote && (
+                    <>
+                      <div className={styles.startingLabel}>Scope</div>
+                      <p className={styles.startingBody}>{startingAction.scopeNote}</p>
+                    </>
+                  )}
+                  <p className={styles.startingEffort}>
+                    {startingAction.effortLabel}:{' '}
+                    {startingAction.effort.charAt(0).toUpperCase() + startingAction.effort.slice(1)}.
+                    This band describes the whole module, not this starting task.
+                  </p>
+                </div>
+                {startingAction.prerequisite && (
+                  <aside className={styles.startingPrerequisite}>
+                    <div className={styles.startingLabel}>Before deeper analysis</div>
+                    <p className={styles.startingBody}>{startingAction.prerequisite.summary}</p>
+                    <p className={styles.startingBody}>{startingAction.prerequisite.gapVersusBaseline}</p>
+                    <p className={styles.startingBody}>{startingAction.prerequisite.blockedWork}</p>
+                  </aside>
+                )}
+              </div>
+            </motion.section>
+          )}
+
           <motion.section
             className={styles.prioritiesSection}
             initial={{ opacity: 0, y: 24 }}
@@ -142,10 +181,9 @@ export default function ResultsDisplay({
             transition={{ ...springEntrance, delay: 0.1 }}
           >
             <span className={styles.sectionTag}>Immediate focus</span>
-            <h2 className={styles.sectionTitle}>Top 3 priorities (next 30 days)</h2>
+            <h2 className={styles.sectionTitle}>Top 3 priorities</h2>
             <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>
-              These are the highest-scored initiatives for your profile — execute in order before
-              expanding scope.
+              These are the highest-scored initiatives for your profile, in priority order.
             </p>
             <div className={styles.prioritiesGrid}>
               {topPriorities.map((title, i) => (
@@ -164,46 +202,56 @@ export default function ResultsDisplay({
             transition={{ ...springEntrance, delay: 0.14 }}
           >
             <span className={styles.sectionTag}>Roadmap</span>
-            <h2 className={styles.sectionTitle}>90-day execution by phase</h2>
+            <h2 className={styles.sectionTitle}>Suggested sequencing by phase</h2>
+            <p className={`${styles.leadIntro} ${styles.phaseWindowNote}`}>{PHASE_WINDOW_NOTE}</p>
 
             <div className={styles.phasesTimeline}>
-              {phases.map((phase) => (
-                <div key={phase.phase} className={styles.phaseBlock}>
-                  <div className={PHASE_HEADER_CLASS[phase.phase as 1 | 2 | 3]}>
-                    <div>
-                      <div className={styles.phaseLabel}>{PHASE_LABELS[phase.phase]}</div>
-                      <div className={styles.phaseName}>{phase.title}</div>
-                    </div>
-                    <div className={styles.phaseDays}>{phase.days}</div>
-                  </div>
-
-                  <div className={styles.phaseModules}>
-                    {phase.modules.map((mod) => (
-                      <div key={mod.id} className={styles.moduleCard}>
-                        <div className={styles.moduleHeader}>
-                          <div className={styles.moduleTitle}>{mod.title}</div>
-                          <div className={styles.moduleMeta}>
-                            <span className={styles.moduleWeek}>{mod.week}</span>
-                            <span className={EFFORT_CLASS[mod.effort]}>
-                              {mod.effort.charAt(0).toUpperCase() + mod.effort.slice(1)} effort
-                            </span>
-                          </div>
-                        </div>
-                        <p className={styles.moduleDescription}>{mod.description}</p>
-                        <div className={styles.outcomesLabel}>Expected outcomes</div>
-                        <ul className={styles.outcomesList}>
-                          {mod.outcomes.map((outcome) => (
-                            <li key={outcome} className={styles.outcomeItem}>
-                              <span className={styles.outcomeDot} />
-                              {outcome}
-                            </li>
-                          ))}
-                        </ul>
+              {schedule.map((phase) => (
+                  <div key={phase.phase} className={styles.phaseBlock}>
+                    <div className={PHASE_HEADER_CLASS[phase.phase]}>
+                      <div>
+                        <div className={styles.phaseLabel}>{phase.phaseLabel}</div>
+                        <div className={styles.phaseName}>{phase.title}</div>
                       </div>
-                    ))}
+                      <div className={styles.phaseDays}>{phase.days}</div>
+                    </div>
+
+                    <div className={styles.phaseModules}>
+                      {phase.modules.length === 0 ? (
+                        <p className={styles.phaseEmpty}>{phase.emptyMessage}</p>
+                      ) : (
+                        phase.modules.map((mod) => (
+                            <div key={mod.id} className={styles.moduleCard}>
+                              <div className={styles.moduleHeader}>
+                                <div className={styles.moduleTitle}>{mod.title}</div>
+                                <div className={styles.moduleMeta}>
+                                  <span className={EFFORT_CLASS[mod.effort]}>
+                                    {startingAction?.moduleId === mod.id
+                                      ? `${startingAction.effortLabel}: ${mod.effort.charAt(0).toUpperCase() + mod.effort.slice(1)}`
+                                      : `${mod.effort.charAt(0).toUpperCase() + mod.effort.slice(1)} effort`}
+                                  </span>
+                                </div>
+                              </div>
+                              <p className={styles.moduleDescription}>{mod.description}</p>
+                              <div className={styles.outcomesLabel}>
+                                {startingAction?.moduleId === mod.id
+                                  ? startingAction.laterProgramLabel
+                                  : 'Expected outcomes'}
+                              </div>
+                              <ul className={styles.outcomesList}>
+                                {mod.outcomes.map((outcome) => (
+                                  <li key={outcome} className={styles.outcomeItem}>
+                                    <span className={styles.outcomeDot} />
+                                    {outcome}
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          ))
+                      )}
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))}
             </div>
           </motion.section>
 
@@ -285,10 +333,7 @@ export default function ResultsDisplay({
           >
             <span className={styles.sectionTag}>Commercial path</span>
             <h2 className={styles.sectionTitle}>Recommended service path</h2>
-            <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>
-              Primary and supporting services follow your scores and vertical lens — tuned for how
-              buyers evaluate and convert in your category.
-            </p>
+            <p className={`${styles.leadIntro} ${styles.leadIntroSpaced}`}>{SERVICE_PATH_NOTE}</p>
             <div className={styles.servicesGrid}>
               <div className={styles.serviceCardPrimary}>
                 <div className={styles.serviceBadge}>Primary</div>
@@ -331,7 +376,7 @@ export default function ResultsDisplay({
             </ul>
           </motion.section>
 
-          <ResultsLeadForm roadmap={roadmap} roadmapToken={roadmapToken} />
+          <ResultsLeadForm roadmapToken={roadmapToken} contact={contact} />
 
           <motion.div
             className={`${styles.ctaSection} ${styles.hideOnPrint}`}
@@ -340,18 +385,13 @@ export default function ResultsDisplay({
             transition={{ ...springEntrance, delay: 0.34 }}
           >
             <div className={styles.ctaTitle}>{primaryCta.headline}</div>
-            <p className={styles.ctaDesc}>
-              The fastest path is a short strategy conversation — we walk through your roadmap,
-              pressure-test priorities, and align on scope. Prefer async? Use the pre-filled email
-              link or forward your share link to your team.
-            </p>
-            <a href={bookingPrimaryHref} className={styles.ctaButton}>
-              Book a strategy conversation
-            </a>
-            {bookingIsHttp && (
-              <a href={mailtoHref} className={styles.ctaMailtoAlt}>
-                {primaryCta.buttonLabel} →
+            <p className={styles.ctaDesc}>{contact.purpose}</p>
+            {contact.href ? (
+              <a href={contact.href} className={styles.ctaButton}>
+                {contact.label}
               </a>
+            ) : (
+              <p className={styles.ctaUnavailable}>{CONTACT_UNAVAILABLE_MESSAGE}</p>
             )}
             <div>
               <Link href="/intake" className={styles.ctaSecondary}>

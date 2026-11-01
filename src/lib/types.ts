@@ -54,7 +54,7 @@ export type TeamCapacity =
 /** Vertical lens derived from `businessType` (see `industry.ts`). */
 export type IndustrySegment =
   | 'healthcare'
-  | 'legal'
+  | 'professional'
   | 'local'
   | 'saas'
   | 'ecommerce'

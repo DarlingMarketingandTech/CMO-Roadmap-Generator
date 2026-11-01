@@ -2,26 +2,37 @@
   "name": "cmo-roadmap-generator",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": "22.x || 24.x"
+  },
+  "packageManager": "npm@10.9.8",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "typecheck": "tsc --noEmit --incremental false",
+    "test": "tsx --test src/lib/intake-answers.test.ts src/lib/schedule.test.ts src/lib/recommendations.test.ts src/lib/starting-action.test.ts src/lib/contact-cta.test.ts"
   },
   "dependencies": {
     "@react-email/components": "^1.0.10",
     "@react-email/render": "^2.0.4",
     "motion": "^12.38.0",
-    "next": "15.5.14",
+    "next": "15.5.28",
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.72.0",
-    "resend": "^6.9.4",
-    "zod": "^4.3.6"
+    "resend": "^6.34.1",
+    "zod": "^4.6.7"
+  },
+  "overrides": {
+    "postcss": "8.5.31",
+    "sharp": "0.35.5"
   },
   "devDependencies": {
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "tsx": "^4.23.15",
     "typescript": "^5"
   }
 }

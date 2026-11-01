@@ -25,7 +25,10 @@ export function composeRoadmap(answers: IntakeAnswers): Roadmap {
   const industrySegment = resolveIndustrySegment(answers);
   const scores = computeModuleScores(flags, answers);
   const limit = flags.isFounderOnly ? 6 : 8;
-  const moduleIds = orderModuleIdsFromScores(scores, limit);
+  const rankedIds = orderModuleIdsFromScores(scores, limit);
+  // A final score at or below zero did not earn a recommendation. Leave it out
+  // instead of backfilling past the cap or moving later modules into the gap.
+  const moduleIds = rankedIds.filter((id) => (scores[id] ?? 0) > 0);
 
   let selectedModules = moduleIds
     .map((id) => ALL_MODULES.find((m) => m.id === id))
@@ -33,18 +36,9 @@ export function composeRoadmap(answers: IntakeAnswers): Roadmap {
 
   selectedModules = applyIndustryModuleLens(selectedModules, industrySegment);
 
-  const total = selectedModules.length;
-
-  let phase1Count: number;
-  let phase2Count: number;
-
-  if (total <= 6) {
-    phase1Count = 2;
-    phase2Count = 2;
-  } else {
-    phase1Count = 3;
-    phase2Count = 3;
-  }
+  // Capacity follows team size, not how many positive modules remain.
+  const phase1Count = flags.isFounderOnly ? 2 : 3;
+  const phase2Count = flags.isFounderOnly ? 2 : 3;
 
   const phase1Modules = selectedModules.slice(0, phase1Count);
   const phase2Modules = selectedModules.slice(phase1Count, phase1Count + phase2Count);

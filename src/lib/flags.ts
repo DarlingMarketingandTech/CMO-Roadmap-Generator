@@ -8,7 +8,10 @@ export function computeFlags(answers: IntakeAnswers): Flags {
   return {
     isPreLaunch: answers.businessStage === 'pre-launch',
     isFounderOnly: answers.teamCapacity === 'founder-only',
-    hasMessyStack: answers.stackMaturity === 'messy' || answers.stackMaturity === 'none',
+    hasMessyStack:
+      answers.stackMaturity === 'messy' ||
+      answers.stackMaturity === 'none' ||
+      answers.bottleneck === 'messy-stack',
     needsBrandClarity: answers.bottleneck === 'unclear-messaging',
     needsLeadGen: answers.primaryGoal === 'more-leads' || answers.bottleneck === 'no-leads',
     needsBookings: answers.primaryGoal === 'more-bookings',

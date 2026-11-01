@@ -1,9 +1,7 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import type { Roadmap } from '@/lib/types';
-import { getClientBookingPrimaryHref } from '@/lib/booking-url';
-import { buildMailtoHref } from '@/lib/rules';
+import { CONTACT_UNAVAILABLE_MESSAGE, type ContactConversation } from '@/lib/contact-cta';
 import styles from './page.module.css';
 
 type Intent = 'email-roadmap' | 'full-version' | 'book-call';
@@ -12,12 +10,12 @@ const STUB_NOTE =
   'This option is not wired to email yet — use “Send my roadmap” for delivery, or book via the strategy CTA below.';
 
 interface ResultsLeadFormProps {
-  roadmap: Roadmap;
   /** Compact or legacy token so the API can recompute the same roadmap server-side. */
   roadmapToken: string;
+  contact: ContactConversation;
 }
 
-export default function ResultsLeadForm({ roadmap, roadmapToken }: ResultsLeadFormProps) {
+export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFormProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
@@ -26,12 +24,6 @@ export default function ResultsLeadForm({ roadmap, roadmapToken }: ResultsLeadFo
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [stubMessage, setStubMessage] = useState<string | null>(null);
-
-  const followUpMailto = buildMailtoHref(roadmap.primaryCta, [
-    'Following up after receiving my roadmap by email.',
-  ]);
-  const bookingHref = getClientBookingPrimaryHref(followUpMailto);
-  const bookingIsHttp = /^https?:\/\//i.test(bookingHref);
 
   async function sendRoadmapEmail(e: FormEvent) {
     e.preventDefault();
@@ -91,17 +83,14 @@ export default function ResultsLeadForm({ roadmap, roadmapToken }: ResultsLeadFo
             reached you.
           </p>
           <p className={styles.leadSuccessSub}>Best next step</p>
-          <a href={bookingHref} className={styles.leadSuccessCta}>
-            Book a strategy conversation
-          </a>
-          <p className={styles.leadSuccessBookSub}>
-            Walk through your roadmap with us — calendar, budget, and sequencing in one conversation.
-          </p>
-          {bookingIsHttp && (
-            <a href={followUpMailto} className={styles.leadSuccessMailto}>
-              {roadmap.primaryCta.buttonLabel} (email)
+          {contact.href ? (
+            <a href={contact.href} className={styles.leadSuccessCta}>
+              {contact.label}
             </a>
+          ) : (
+            <p className={styles.leadSuccessBookSub}>{CONTACT_UNAVAILABLE_MESSAGE}</p>
           )}
+          <p className={styles.leadSuccessBookSub}>{contact.purpose}</p>
           <p className={styles.leadSuccessHint}>
             You can also use <strong>Copy share link</strong> above to send the full on-page roadmap
             to a colleague.

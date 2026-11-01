@@ -185,17 +185,18 @@ Twelve presets live in `src/lib/demo-profiles.ts`. On the home page:
 | `RESEND_API_KEY` | Yes (to send) | Resend API key |
 | `RESEND_FROM` | Yes (to send) | Verified sender, e.g. `CMO Roadmap <onboarding@resend.dev>` |
 | `RESEND_REPLY_TO` | No | Reply-To on outbound mail |
-| `NEXT_PUBLIC_BOOKING_URL` | No | **Recommended** public Cal / meetings URL — used on the **results page** and in the **email** when `STRATEGY_BOOKING_URL` is unset |
-| `STRATEGY_BOOKING_URL` | No | Optional **server-only** override (wins over `NEXT_PUBLIC_*` in the API route so you can keep a private link out of the client bundle) |
-| `STRATEGY_CONTACT_EMAIL` | No | Mailto fallback when no booking URL is set (defaults to `strategy@example.com`) |
+| `NEXT_PUBLIC_BOOKING_URL` | No | Public Cal / meetings URL. Used on the results page and in the email when `STRATEGY_BOOKING_URL` is unset |
+| `STRATEGY_BOOKING_URL` | No | Optional booking URL. When set, both the results page and the email use it before `NEXT_PUBLIC_BOOKING_URL` |
+| `STRATEGY_CONTACT_EMAIL` | No | Mailto used when no booking URL is set. A missing address, or an example.com address, leaves the conversation link unavailable |
 | `LEAD_LOG_VERBOSE` | No | Set to `1` to log full lead payload (including email) to the server console |
 
 Copy **`env.example`** to **`.env.local`** for local development.
 
 ### Changing the booking URL
 
-- Set **`NEXT_PUBLIC_BOOKING_URL`** so the results page primary CTA and the transactional email use the same HTTPS booking link (restart dev server after changing).
-- Optionally set **`STRATEGY_BOOKING_URL`** only on the server if you need a different URL in email than on the page, or a link you do not want embedded in client JavaScript.
+- The results page and the roadmap email resolve one destination, in this order: `STRATEGY_BOOKING_URL`, then `NEXT_PUBLIC_BOOKING_URL`, then `STRATEGY_CONTACT_EMAIL`. Restart the server after changing them.
+- The button label and the mailto subject come from the starting task. The mailto has no body, so the task text and personal details stay out of the link.
+- When none of those values is usable, the page and the email say that a conversation link is not configured. They do not substitute an example address.
 
 ### Flow
 
