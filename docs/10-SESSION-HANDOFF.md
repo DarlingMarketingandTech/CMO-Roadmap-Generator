@@ -15,6 +15,8 @@ CMO-007 is on local branch `cmo-007-website-readiness`, created from `main` at `
 
 Jacob also changed direction mid-task (D18): the results page now shows a short version, the full plan is sent only by email with a "Request a consult" button, and Jacob gets a lead copy when `LEAD_NOTIFY_EMAIL` is set. This overrides the AGENTS.md "no signup" invariant for the full plan only.
 
+Verified commit: `e0f29222a96575c125f35fb05146cbd8aa3c054c` (typecheck, 44/44 tests, build). The next commit records that result and changes documentation only.
+
 Earlier history follows.
 
 Canonical working copy: `C:\dev\CMO-Roadmap-Generator`. CMO-001 is local commit `77413607aed8630c717c768052e2a2d7dfa7236f` on `cmo-001-supported-dependencies`. CMO-002 is local commit `a07aab2ebb58b31391446418425a8e1e117878b0` on `cmo-002-shared-intake-validation`. Neither was pushed.

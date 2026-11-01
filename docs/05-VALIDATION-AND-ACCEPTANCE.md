@@ -284,7 +284,7 @@ Branch `cmo-007-website-readiness`, created from `main` at `e1089f8` on November
 
 Commits: `8cc149f` stubs and contact default, `54707ab` email handler and full-plan email, `0ebc3ec` short-version gate (D18), `8cab330` stage question (D17), `e622f33` rebrand and link back, then this documentation commit.
 
-Checks on the final code: `npx tsc --noEmit --incremental false` passes. `npm test` passes 44 of 44 across 9 suites. `npm run build` compiles and generates 8 static pages.
+Checks on the final code: `npx tsc --noEmit --incremental false` passes. `npm test` passes 44 of 44 across 8 suites. `npm run build` compiles and generates 8 static pages.
 
 What the tests prove:
 
@@ -298,3 +298,5 @@ Browser check (production build on localhost, Playwright, Chromium): intake at 1
 Contrast (computed from the brand tokens): crimson on cream ≈ 7.6:1, muted on cream ≈ 6.7:1, white on crimson ≈ 8.9:1, ink on cream and cream on ink ≈ 15:1. All pass WCAG AA for body text.
 
 Not verified: real Resend delivery and the owner copy in a real inbox; the email's rendering in mail clients (it was rendered to HTML but not viewed in a client); keyboard-only and screen-reader passes beyond the accessibility tree; the deployed site; the website contact page accepting the visitor. The main website is still on HOLD at its Vercel address.
+
+Final verification: commit `e0f29222a96575c125f35fb05146cbd8aa3c054c` with a clean tree (only the untracked `.claude/` folder). `npx tsc --noEmit --incremental false` passed. `npm test`: 44 tests, 8 suites, 44 pass, 0 fail. `npm run build`: compiled successfully, 8 of 8 static pages generated. The commit that adds this paragraph changes documentation only.
