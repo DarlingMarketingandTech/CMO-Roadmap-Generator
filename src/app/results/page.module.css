@@ -600,12 +600,6 @@
   letter-spacing: -0.02em;
 }
 
-.ctaUnavailable {
-  font-size: 1rem;
-  color: var(--color-muted);
-  max-width: 42ch;
-  line-height: 1.65;
-}
 
 .ctaSecondary {
   display: inline-block;
@@ -1143,34 +1137,9 @@
   outline-offset: 1px;
 }
 
-.leadIntentFieldset {
-  border: none;
-  margin: 0;
-  padding: 0;
-}
 
-.leadIntentLegend {
-  font-size: 0.875rem;
-  font-weight: 700;
-  font-family: var(--font-display);
-  color: var(--color-text);
-  margin-bottom: var(--space-3);
-}
 
-.leadIntentRow {
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-4) var(--space-6);
-}
 
-.leadRadio {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font-size: 0.875rem;
-  color: var(--color-text);
-  cursor: pointer;
-}
 
 .leadSubmit {
   align-self: flex-start;
@@ -1185,20 +1154,7 @@
   cursor: pointer;
 }
 
-.leadStubNote {
-  margin-top: var(--space-4);
-  font-size: 0.875rem;
-  color: #7dd3a8;
-  line-height: 1.55;
-}
 
-.leadIntegrationHint {
-  margin-top: var(--space-4);
-  font-size: 0.75rem;
-  color: var(--color-muted);
-  line-height: 1.45;
-  max-width: 45rem;
-}
 
 .leadHoneypot {
   position: absolute;

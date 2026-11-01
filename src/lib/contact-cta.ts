@@ -5,8 +5,6 @@ import type { Roadmap } from './types';
 /** Visible when the first scheduled module has no starting-action guidance. */
 export const STRATEGY_CONVERSATION_LABEL = 'Book a strategy conversation';
 
-export const CONTACT_UNAVAILABLE_MESSAGE = 'A conversation link is not configured.';
-
 const STARTING_CONTACT_LABELS = {
   'website-conversion': 'Discuss your page note',
   'crm-cleanup': 'Discuss your inquiry list',
@@ -22,7 +20,7 @@ export interface ContactConversation {
   label: string;
   subject: string;
   purpose: string;
-  href: string | null;
+  href: string;
 }
 
 export function contactConversationFor(action: StartingAction | null): Omit<ContactConversation, 'href'> {
@@ -48,6 +46,6 @@ export function contactForRoadmap(roadmap: Roadmap, env?: ContactEnv): ContactCo
   const destination = resolveContactDestination(conversation.subject, env);
   return {
     ...conversation,
-    href: destination.status === 'unavailable' ? null : destination.href,
+    href: destination.href,
   };
 }

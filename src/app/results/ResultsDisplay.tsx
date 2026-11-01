@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import type { IndustrySegment, Roadmap } from '@/lib/types';
-import { CONTACT_UNAVAILABLE_MESSAGE, type ContactConversation } from '@/lib/contact-cta';
+import type { ContactConversation } from '@/lib/contact-cta';
 import { SERVICE_PATH_NOTE } from '@/lib/rules';
 import BrandWordmark from '@/components/brand/BrandWordmark';
 import { springEntrance } from '@/lib/motion';
@@ -386,13 +386,9 @@ export default function ResultsDisplay({
           >
             <div className={styles.ctaTitle}>{primaryCta.headline}</div>
             <p className={styles.ctaDesc}>{contact.purpose}</p>
-            {contact.href ? (
-              <a href={contact.href} className={styles.ctaButton}>
-                {contact.label}
-              </a>
-            ) : (
-              <p className={styles.ctaUnavailable}>{CONTACT_UNAVAILABLE_MESSAGE}</p>
-            )}
+            <a href={contact.href} className={styles.ctaButton}>
+              {contact.label}
+            </a>
             <div>
               <Link href="/intake" className={styles.ctaSecondary}>
                 ← Start over

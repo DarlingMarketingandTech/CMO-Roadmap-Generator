@@ -13,7 +13,6 @@ import {
   Section,
   Text,
 } from '@react-email/components';
-import { CONTACT_UNAVAILABLE_MESSAGE } from '@/lib/contact-cta';
 import type { RoadmapEmailModel } from '@/lib/email/roadmap-email-model';
 
 const base = '#0A0A0A';
@@ -24,7 +23,7 @@ const muted = '#888888';
 const border = 'rgba(245, 240, 232, 0.12)';
 
 export interface RoadmapEmailProps extends RoadmapEmailModel {
-  strategyCtaUrl: string | null;
+  strategyCtaUrl: string;
   strategyCtaLabel: string;
   strategyCtaPurpose: string;
 }
@@ -167,21 +166,15 @@ export default function RoadmapEmail({
 
           <Section style={ctaBox}>
             <Text style={ctaText}>{strategyCtaPurpose}</Text>
-            {strategyCtaUrl ? (
-              <>
-                <Button href={strategyCtaUrl} style={button}>
-                  {strategyCtaLabel}
-                </Button>
-                <Text style={footerNote}>
-                  If the button does not work, copy this link:{' '}
-                  <Link href={strategyCtaUrl} style={link}>
-                    {strategyCtaUrl}
-                  </Link>
-                </Text>
-              </>
-            ) : (
-              <Text style={ctaSubline}>{CONTACT_UNAVAILABLE_MESSAGE}</Text>
-            )}
+            <Button href={strategyCtaUrl} style={button}>
+              {strategyCtaLabel}
+            </Button>
+            <Text style={footerNote}>
+              If the button does not work, copy this link:{' '}
+              <Link href={strategyCtaUrl} style={link}>
+                {strategyCtaUrl}
+              </Link>
+            </Text>
           </Section>
 
           <Text style={disclaimer}>
@@ -316,12 +309,6 @@ const ctaText = {
   margin: '0 0 8px',
 };
 
-const ctaSubline = {
-  color: muted,
-  fontSize: '14px',
-  lineHeight: '1.55',
-  margin: '0 0 18px',
-};
 
 const button = {
   backgroundColor: accent,

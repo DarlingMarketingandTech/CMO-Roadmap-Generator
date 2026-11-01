@@ -4,7 +4,6 @@ import React from 'react';
 import { render } from '@react-email/render';
 import { composeRoadmap } from './compose-roadmap';
 import {
-  CONTACT_UNAVAILABLE_MESSAGE,
   contactConversationFor,
   contactForRoadmap,
   STRATEGY_CONVERSATION_LABEL,
@@ -13,6 +12,7 @@ import { DEMO_PROFILES } from './demo-profiles';
 import { roadmapToEmailModel } from './email/roadmap-email-model';
 import RoadmapEmail from '../emails/RoadmapEmail';
 import { resolveContactDestination } from './booking-url';
+import { DEFAULT_MAIN_SITE_URL, mainSiteUrl } from './site';
 import { startingActionForRoadmap } from './starting-action';
 
 function plan(id: string) {
@@ -119,9 +119,10 @@ describe('CMO-006 contact conversation', () => {
       assert.equal([...url.searchParams.keys()].join(','), 'subject');
     }
 
+    const siteContact = { status: 'site', href: `${DEFAULT_MAIN_SITE_URL}/contact` };
     assert.deepEqual(
       resolveContactDestination(subject, { STRATEGY_CONTACT_EMAIL: 'strategy@example.com' }),
-      { status: 'unavailable' },
+      siteContact,
     );
     assert.deepEqual(
       resolveContactDestination(subject, {
@@ -135,10 +136,16 @@ describe('CMO-006 contact conversation', () => {
         STRATEGY_BOOKING_URL: 'javascript:alert(1)',
         NEXT_PUBLIC_BOOKING_URL: 'not a url',
         STRATEGY_CONTACT_EMAIL: 'strategy@example.com',
+        NEXT_PUBLIC_MAIN_SITE_URL: 'https://www.example.com',
       }),
-      { status: 'unavailable' },
+      siteContact,
     );
-    assert.deepEqual(resolveContactDestination(subject, {}), { status: 'unavailable' });
+    assert.deepEqual(resolveContactDestination(subject, {}), siteContact);
+    assert.deepEqual(
+      resolveContactDestination(subject, { NEXT_PUBLIC_MAIN_SITE_URL: 'https://site.roadmap.test/' }),
+      { status: 'site', href: 'https://site.roadmap.test/contact' },
+    );
+    assert.equal(mainSiteUrl('javascript:alert(1)'), DEFAULT_MAIN_SITE_URL);
   });
 
   it('keeps personal details and the task out of the rendered email link', async () => {
@@ -166,19 +173,20 @@ describe('CMO-006 contact conversation', () => {
     assert.equal(href.includes('Example%20Co'), false);
     assert.equal(href.includes('records'), false);
 
-    const unavailable = contactForRoadmap(roadmap, {});
-    assert.equal(unavailable.href, null);
-    const unavailableHtml = await render(
+    const fallback = contactForRoadmap(roadmap, {});
+    assert.equal(fallback.href, `${DEFAULT_MAIN_SITE_URL}/contact`);
+    const fallbackHtml = await render(
       React.createElement(RoadmapEmail, {
         ...roadmapToEmailModel(roadmap, 'Alex Example', null),
-        strategyCtaUrl: unavailable.href,
-        strategyCtaLabel: unavailable.label,
-        strategyCtaPurpose: unavailable.purpose,
+        strategyCtaUrl: fallback.href,
+        strategyCtaLabel: fallback.label,
+        strategyCtaPurpose: fallback.purpose,
       }),
       { plainText: true },
     );
-    assert.match(unavailableHtml, new RegExp(CONTACT_UNAVAILABLE_MESSAGE));
-    assert.equal(/mailto:/i.test(unavailableHtml), false);
-    assert.equal(unavailableHtml.includes('strategy@example.com'), false);
+    assert.ok(fallbackHtml.includes(`${DEFAULT_MAIN_SITE_URL}/contact`));
+    assert.equal(/mailto:/i.test(fallbackHtml), false);
+    assert.equal(/example\.(com|net|org)/.test(fallbackHtml), false);
+    assert.equal(/not configured/i.test(fallbackHtml), false);
   });
 });
