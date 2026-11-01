@@ -185,9 +185,11 @@ Twelve presets live in `src/lib/demo-profiles.ts`. On the home page:
 | `RESEND_API_KEY` | Yes (to send) | Resend API key |
 | `RESEND_FROM` | Yes (to send) | Verified sender, e.g. `CMO Roadmap <onboarding@resend.dev>` |
 | `RESEND_REPLY_TO` | No | Reply-To on outbound mail |
-| `NEXT_PUBLIC_BOOKING_URL` | No | Public Cal / meetings URL. Used on the results page and in the email when `STRATEGY_BOOKING_URL` is unset |
-| `STRATEGY_BOOKING_URL` | No | Optional booking URL. When set, both the results page and the email use it before `NEXT_PUBLIC_BOOKING_URL` |
-| `STRATEGY_CONTACT_EMAIL` | No | Mailto used when no booking URL is set. A missing address, or an example.com address, leaves the conversation link unavailable |
+| `LEAD_NOTIFY_EMAIL` | No | Owner inbox that receives a copy of each "Email my plan" request (name, email, business name, answers). Unset means no copy, and the form does not claim one |
+| `NEXT_PUBLIC_MAIN_SITE_URL` | No | Main Darling MarTech website. Defaults to `https://darling-martech-website-project-v4.vercel.app`. Used for the header/footer link back and the default contact page |
+| `STRATEGY_BOOKING_URL` | No | Booking URL that replaces the website contact page for the consult button |
+| `NEXT_PUBLIC_BOOKING_URL` | No | Same as above, checked after `STRATEGY_BOOKING_URL` |
+| `STRATEGY_CONTACT_EMAIL` | No | Mailto used when no booking URL is set, before the website contact page |
 | `LEAD_LOG_VERBOSE` | No | Set to `1` to log full lead payload (including email) to the server console |
 
 Copy **`env.example`** to **`.env.local`** for local development.
@@ -196,7 +198,8 @@ Copy **`env.example`** to **`.env.local`** for local development.
 
 - The results page and the roadmap email resolve one destination, in this order: `STRATEGY_BOOKING_URL`, then `NEXT_PUBLIC_BOOKING_URL`, then `STRATEGY_CONTACT_EMAIL`. Restart the server after changing them.
 - The button label and the mailto subject come from the starting task. The mailto has no body, so the task text and personal details stay out of the link.
-- When none of those values is usable, the page and the email say that a conversation link is not configured. They do not substitute an example address.
+- When none of those values is usable, the link goes to the main website's `/contact` page (D18). Example.com values are always skipped.
+- The results page shows a short version only. The full plan is sent by email with a "Request a consult" button (D18).
 
 ### Flow
 

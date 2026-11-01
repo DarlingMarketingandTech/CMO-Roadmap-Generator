@@ -1,8 +1,21 @@
 # Next-session handoff
 
-Updated November 1, 2026 after the CMO-006 contact alignment commit. This file is the short continuation entry point.
+Updated November 1, 2026 after the CMO-007 website-readiness work. This file is the short continuation entry point.
 
 ## Current state
+
+CMO-007 is on local branch `cmo-007-website-readiness`, created from `main` at `e1089f8` (PR #2 merged). Nothing was pushed, deployed, or emailed. It meets the owner's six-item readiness bar for the Darling MarTech website link, locally:
+
+1. The stub inquiry options are gone. No `example.com` destination can render.
+2. "Email my plan" sends through Resend (tested with a fake transport only). The discussion and consult links go to the website contact page, which Jacob approved.
+3. The stage question uses owner language with no revenue bands (D17).
+4. The site uses the website's crimson/cream/charcoal palette, Montserrat and Inter, and the owner's DM logo.
+5. A header link and a footer link return to the main website (`NEXT_PUBLIC_MAIN_SITE_URL`, default the website's Vercel address).
+6. Typecheck, 44 tests, and the build pass. The final commit is in the CMO-007 validation record and the last line of this section.
+
+Jacob also changed direction mid-task (D18): the results page now shows a short version, the full plan is sent only by email with a "Request a consult" button, and Jacob gets a lead copy when `LEAD_NOTIFY_EMAIL` is set. This overrides the AGENTS.md "no signup" invariant for the full plan only.
+
+Earlier history follows.
 
 Canonical working copy: `C:\dev\CMO-Roadmap-Generator`. CMO-001 is local commit `77413607aed8630c717c768052e2a2d7dfa7236f` on `cmo-001-supported-dependencies`. CMO-002 is local commit `a07aab2ebb58b31391446418425a8e1e117878b0` on `cmo-002-shared-intake-validation`. Neither was pushed.
 
@@ -22,9 +35,17 @@ The CMO-003 demo hash remains `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e
 
 ## Active milestone
 
+CMO-007 is complete locally and waiting on Jacob's approval to push and deploy. Before the website turns on `PILLAR_TOOLS`, the deployed tool needs: `RESEND_API_KEY` and `RESEND_FROM` on a Resend-verified sending domain, `LEAD_NOTIFY_EMAIL` if Jacob wants lead copies, and no stale `STRATEGY_BOOKING_URL`, `NEXT_PUBLIC_BOOKING_URL`, or `STRATEGY_CONTACT_EMAIL` that would override the contact page. Then one approved real test send. When the website moves to its custom domain, set `NEXT_PUBLIC_MAIN_SITE_URL` or change `DEFAULT_MAIN_SITE_URL` in `src/lib/site.ts`.
+
+Earlier milestone notes:
+
 CMO-006 contact alignment is committed on this branch. Attribution still depends on the KPI baseline, and saas-reporting still schedules attribution cleanup ahead of that baseline. The page says deeper attribution and channel ROI stay blocked until a written outcome definition and a current number exist. The service card can still name different work from the first scheduled module. That disagreement stays in D15. The next change is starting guidance for the other seven modules. Leave the service order unchanged. Do not start a redesign, Next 16, a database, or an AI service.
 
 ## First actions
+
+For CMO-007: review the branch, approve the push and deploy, set the Vercel variables above, and approve one real test send to an inbox Jacob controls. Then flip the website's `PILLAR_TOOLS` switch. Keep the CMO-007 baseline hash `a9f21063b4a7f238c8ad0f649da645c0efc64b1f46908fe3ba87eaab14a30091` and the three earlier hashes.
+
+Earlier first actions:
 
 1. Review the contact alignment on `cmo-006-align-primary-cta`. The button labels are "Discuss your page note," "Discuss your inquiry list," and "Discuss your measurement baseline."
 2. Keep the three demo hashes. Do not overwrite `ca99f950c934ffdff5030dab9df58a1de9c35b255a787366e8c80dd140946d14`, `6c51827e741cb5c4d49280829ff96cea8e5816eae8d96eb1cf7cea6c554eb217`, or `451f240ca9e2a62ae9db73047817a0940b6f6738f00a36e667818ef243f7472b`. The starting-guidance commit is `530242db3e8c04f72d1c8d555f94bfacb27d9a8d`.
