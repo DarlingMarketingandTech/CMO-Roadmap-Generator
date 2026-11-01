@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import { composeRoadmap } from '@/lib/compose-roadmap';
+import { contactForRoadmap } from '@/lib/contact-cta';
 import { parseIntakeAnswersFromResultsParams } from '@/lib/encode-answers';
 import ResultsDisplay from './ResultsDisplay';
 
@@ -18,6 +19,7 @@ export default async function ResultsPage({ searchParams }: ResultsPageProps) {
   }
 
   const roadmap = composeRoadmap(parsed.answers);
+  const contact = contactForRoadmap(roadmap);
 
-  return <ResultsDisplay roadmap={roadmap} roadmapToken={parsed.token} />;
+  return <ResultsDisplay roadmap={roadmap} roadmapToken={parsed.token} contact={contact} />;
 }

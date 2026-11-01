@@ -13,6 +13,7 @@ import {
   Section,
   Text,
 } from '@react-email/components';
+import { CONTACT_UNAVAILABLE_MESSAGE } from '@/lib/contact-cta';
 import type { RoadmapEmailModel } from '@/lib/email/roadmap-email-model';
 
 const base = '#0A0A0A';
@@ -23,7 +24,9 @@ const muted = '#888888';
 const border = 'rgba(245, 240, 232, 0.12)';
 
 export interface RoadmapEmailProps extends RoadmapEmailModel {
-  strategyCtaUrl: string;
+  strategyCtaUrl: string | null;
+  strategyCtaLabel: string;
+  strategyCtaPurpose: string;
 }
 
 export default function RoadmapEmail({
@@ -41,6 +44,8 @@ export default function RoadmapEmail({
   engagementPathRationale,
   sprintTitle,
   strategyCtaUrl,
+  strategyCtaLabel,
+  strategyCtaPurpose,
 }: RoadmapEmailProps) {
   return (
     <Html>
@@ -161,19 +166,22 @@ export default function RoadmapEmail({
           <Hr style={hr} />
 
           <Section style={ctaBox}>
-            <Text style={ctaText}>
-              Ready to pressure-test this plan with your calendar and budget?
-            </Text>
-            <Text style={ctaSubline}>Walk through your roadmap on a short call — sequencing, tradeoffs, and what to fund first.</Text>
-            <Button href={strategyCtaUrl} style={button}>
-              Book a strategy conversation
-            </Button>
-            <Text style={footerNote}>
-              If the button does not work, copy this link:{' '}
-              <Link href={strategyCtaUrl} style={link}>
-                {strategyCtaUrl}
-              </Link>
-            </Text>
+            <Text style={ctaText}>{strategyCtaPurpose}</Text>
+            {strategyCtaUrl ? (
+              <>
+                <Button href={strategyCtaUrl} style={button}>
+                  {strategyCtaLabel}
+                </Button>
+                <Text style={footerNote}>
+                  If the button does not work, copy this link:{' '}
+                  <Link href={strategyCtaUrl} style={link}>
+                    {strategyCtaUrl}
+                  </Link>
+                </Text>
+              </>
+            ) : (
+              <Text style={ctaSubline}>{CONTACT_UNAVAILABLE_MESSAGE}</Text>
+            )}
           </Section>
 
           <Text style={disclaimer}>

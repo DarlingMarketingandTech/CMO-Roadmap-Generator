@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { motion } from 'motion/react';
 import type { IndustrySegment, Roadmap } from '@/lib/types';
-import { getClientBookingPrimaryHref } from '@/lib/booking-url';
-import { buildMailtoHref, SERVICE_PATH_NOTE } from '@/lib/rules';
+import { CONTACT_UNAVAILABLE_MESSAGE, type ContactConversation } from '@/lib/contact-cta';
+import { SERVICE_PATH_NOTE } from '@/lib/rules';
 import BrandWordmark from '@/components/brand/BrandWordmark';
 import { springEntrance } from '@/lib/motion';
 import { PHASE_WINDOW_NOTE, schedulePhaseViews } from '@/lib/schedule-presentation';
@@ -17,6 +17,8 @@ interface ResultsDisplayProps {
   roadmap: Roadmap;
   /** Canonical compact token for the validated answers shown in this roadmap. */
   roadmapToken: string;
+  /** Server-resolved conversation link. The label comes from the starting action. */
+  contact: ContactConversation;
 }
 
 const PHASE_HEADER_CLASS: Record<1 | 2 | 3, string> = {
@@ -43,6 +45,7 @@ const SEGMENT_COPY: Record<IndustrySegment, string> = {
 export default function ResultsDisplay({
   roadmap,
   roadmapToken,
+  contact,
 }: ResultsDisplayProps) {
   const {
     topPriorities,
@@ -60,16 +63,6 @@ export default function ResultsDisplay({
   } = roadmap;
   const schedule = schedulePhaseViews(roadmap);
   const startingAction = startingActionForRoadmap(roadmap);
-
-  const mailtoHref = buildMailtoHref(primaryCta, [
-    `Primary service: ${primaryService.title}`,
-    `Supporting: ${secondaryService.title}`,
-    `Engagement shape: ${engagementFormat.title}`,
-    `Sprint / program: ${recommendedEngagement.title}`,
-    `Top priorities: ${topPriorities.join('; ')}`,
-  ]);
-  const bookingPrimaryHref = getClientBookingPrimaryHref(mailtoHref);
-  const bookingIsHttp = /^https?:\/\//i.test(bookingPrimaryHref);
 
   return (
     <div className={styles.page}>
@@ -383,7 +376,7 @@ export default function ResultsDisplay({
             </ul>
           </motion.section>
 
-          <ResultsLeadForm roadmap={roadmap} roadmapToken={roadmapToken} />
+          <ResultsLeadForm roadmapToken={roadmapToken} contact={contact} />
 
           <motion.div
             className={`${styles.ctaSection} ${styles.hideOnPrint}`}
@@ -392,18 +385,13 @@ export default function ResultsDisplay({
             transition={{ ...springEntrance, delay: 0.34 }}
           >
             <div className={styles.ctaTitle}>{primaryCta.headline}</div>
-            <p className={styles.ctaDesc}>
-              The fastest path is a short strategy conversation — we walk through your roadmap,
-              pressure-test priorities, and align on scope. Prefer async? Use the pre-filled email
-              link or forward your share link to your team.
-            </p>
-            <a href={bookingPrimaryHref} className={styles.ctaButton}>
-              Book a strategy conversation
-            </a>
-            {bookingIsHttp && (
-              <a href={mailtoHref} className={styles.ctaMailtoAlt}>
-                {primaryCta.buttonLabel} →
+            <p className={styles.ctaDesc}>{contact.purpose}</p>
+            {contact.href ? (
+              <a href={contact.href} className={styles.ctaButton}>
+                {contact.label}
               </a>
+            ) : (
+              <p className={styles.ctaUnavailable}>{CONTACT_UNAVAILABLE_MESSAGE}</p>
             )}
             <div>
               <Link href="/intake" className={styles.ctaSecondary}>

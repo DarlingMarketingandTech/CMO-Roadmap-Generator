@@ -600,6 +600,13 @@
   letter-spacing: -0.02em;
 }
 
+.ctaUnavailable {
+  font-size: 1rem;
+  color: var(--color-muted);
+  max-width: 42ch;
+  line-height: 1.65;
+}
+
 .ctaSecondary {
   display: inline-block;
   margin-top: var(--space-4);

@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { describe, it } from 'node:test';
 import React from 'react';
 import { render } from '@react-email/render';
+import { contactForRoadmap } from './contact-cta';
 import { composeRoadmap } from './compose-roadmap';
 import { DEMO_PROFILES } from './demo-profiles';
 import { roadmapToEmailModel } from './email/roadmap-email-model';
@@ -46,6 +47,12 @@ function profile(id: string) {
   const found = DEMO_PROFILES.find((item) => item.id === id);
   assert.ok(found, id);
   return found;
+}
+
+const RENDERED_EMAIL_ENV = { STRATEGY_CONTACT_EMAIL: 'planner@roadmap.test' };
+
+function emailContact(id: string) {
+  return contactForRoadmap(plan(id), RENDERED_EMAIL_ENV);
 }
 
 function plan(id: string) {
@@ -294,10 +301,13 @@ describe('CMO-006 starting actions', () => {
     assert.equal(clinic.startingAction.prerequisite, null);
     assert.equal('outcomes' in clinic.startingAction, false);
 
+    const clinicContact = emailContact('clinic-bookings');
     const clinicHtml = await render(
       React.createElement(RoadmapEmail, {
         ...clinic,
-        strategyCtaUrl: 'mailto:strategy@example.com',
+        strategyCtaUrl: clinicContact.href,
+        strategyCtaLabel: clinicContact.label,
+        strategyCtaPurpose: clinicContact.purpose,
       }),
       { plainText: true },
     );
@@ -306,7 +316,12 @@ describe('CMO-006 starting actions', () => {
     assert.match(clinicHtml, /desired customer action/);
     assert.equal(clinicHtml.includes('Full CRO audit completed'), false);
     assert.equal(clinicHtml.includes('Later work in this module'), false);
-    assert.match(clinicHtml, /Discuss local growth|Book a strategy conversation/);
+    assert.match(clinicHtml, /Discuss your page note/);
+    assert.equal(clinicHtml.includes('Discuss local growth'), false);
+    assert.equal(clinicHtml.includes('strategy@example.com'), false);
+    const clinicMailto = clinicHtml.match(/mailto:\S+/)?.[0] ?? '';
+    assert.equal(clinicMailto, 'mailto:planner@roadmap.test?subject=Discuss%20your%20page%20note');
+    assert.equal(clinicMailto.includes('body='), false);
 
     const manual = roadmapToEmailModel(plan('manual-workflow'), 'Alex Example', null);
     assert.match(manual.startingAction?.completion ?? '', /not completed cleanup/);
@@ -316,10 +331,13 @@ describe('CMO-006 starting actions', () => {
     assert.match(saas.startingAction?.prerequisite ?? '', /KPI \/ Reporting Baseline/);
     assert.match(saas.startingAction?.prerequisite ?? '', /channel ROI/);
     assert.match(saas.startingAction?.prerequisite ?? '', /number unavailable/);
+    const saasContact = emailContact('saas-reporting');
     const saasHtml = await render(
       React.createElement(RoadmapEmail, {
         ...saas,
-        strategyCtaUrl: 'mailto:strategy@example.com',
+        strategyCtaUrl: saasContact.href,
+        strategyCtaLabel: saasContact.label,
+        strategyCtaPurpose: saasContact.purpose,
       }),
       { plainText: true },
     );
@@ -339,10 +357,13 @@ describe('CMO-006 starting actions', () => {
       ),
       false,
     );
+    const noChannelContact = emailContact('local-visibility');
     const noChannelHtml = await render(
       React.createElement(RoadmapEmail, {
         ...noChannel,
-        strategyCtaUrl: 'mailto:strategy@example.com',
+        strategyCtaUrl: noChannelContact.href,
+        strategyCtaLabel: noChannelContact.label,
+        strategyCtaPurpose: noChannelContact.purpose,
       }),
       { plainText: true },
     );
@@ -351,16 +372,23 @@ describe('CMO-006 starting actions', () => {
 
     const ecommerce = roadmapToEmailModel(plan('ecom-conversion'), 'Alex Example', null);
     assert.equal(ecommerce.startingAction, null);
+    const ecommerceContact = emailContact('ecom-conversion');
     const ecommerceHtml = await render(
       React.createElement(RoadmapEmail, {
         ...ecommerce,
-        strategyCtaUrl: 'mailto:strategy@example.com',
+        strategyCtaUrl: ecommerceContact.href,
+        strategyCtaLabel: ecommerceContact.label,
+        strategyCtaPurpose: ecommerceContact.purpose,
       }),
       { plainText: true },
     );
     assert.equal(/starting action/i.test(ecommerceHtml), false);
+    assert.match(ecommerceHtml, /Book a strategy conversation/);
+    assert.match(noChannelHtml, /Discuss your page note/);
+    assert.match(saasHtml, /Discuss your measurement baseline/);
 
     const button = plan('saas-reporting').primaryCta.buttonLabel;
     assert.equal(saasHtml.includes(button), false);
+    assert.equal(saasHtml.includes('strategy@example.com'), false);
   });
 });

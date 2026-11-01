@@ -466,8 +466,6 @@ export function getEngagementFormatRecommendation(
 // Commercial CTA (varies by recommended primary service)
 // -----------------------------------------------------------------------------
 
-const DEFAULT_STRATEGY_EMAIL = 'strategy@example.com';
-
 export function getPrimaryCta(
   primaryServiceTitle: string,
   flags: Flags,
@@ -569,11 +567,6 @@ export function getPrimaryCta(
     mailtoSubject: subject,
     mailtoBodyIntro: intro,
   };
-}
-
-export function buildMailtoHref(cta: PrimaryCta, extraBodyLines: string[]): string {
-  const body = [cta.mailtoBodyIntro, '', ...extraBodyLines].join('\n');
-  return `mailto:${DEFAULT_STRATEGY_EMAIL}?subject=${encodeURIComponent(cta.mailtoSubject)}&body=${encodeURIComponent(body)}`;
 }
 
 // -----------------------------------------------------------------------------

@@ -2,8 +2,8 @@ import { NextResponse } from 'next/server';
 import { Resend } from 'resend';
 import { render } from '@react-email/render';
 import RoadmapEmail from '@/emails/RoadmapEmail';
-import { resolveBookingUrl } from '@/lib/booking-url';
 import { composeRoadmap } from '@/lib/compose-roadmap';
+import { contactForRoadmap } from '@/lib/contact-cta';
 import { decodeRoadmapToken } from '@/lib/email/decode-roadmap-token';
 import { logLeadSubmission } from '@/lib/email/log-lead-submission';
 import { roadmapToEmailModel } from '@/lib/email/roadmap-email-model';
@@ -50,14 +50,16 @@ export async function POST(request: Request) {
 
   const roadmap = composeRoadmap(answers);
   const model = roadmapToEmailModel(roadmap, name, company || undefined);
-  const cta = resolveBookingUrl();
+  const contact = contactForRoadmap(roadmap);
 
   let html: string;
   try {
     html = await render(
       RoadmapEmail({
         ...model,
-        strategyCtaUrl: cta,
+        strategyCtaUrl: contact.href,
+        strategyCtaLabel: contact.label,
+        strategyCtaPurpose: contact.purpose,
       }),
     );
   } catch (e) {
