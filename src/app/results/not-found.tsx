@@ -1,4 +1,6 @@
 import Link from 'next/link';
+import SiteFooter from '@/components/brand/SiteFooter';
+import SiteHeader from '@/components/brand/SiteHeader';
 import styles from './page.module.css';
 
 /**
@@ -8,17 +10,19 @@ import styles from './page.module.css';
  */
 export default function ResultsNotFound() {
   return (
-    <div className={styles.errorState}>
-      <div className={styles.errorTitle}>This Roadmap Link Is Invalid or Incomplete</div>
-      <p className={styles.errorDesc}>
-        We could not load a roadmap from this URL. Open a complete share link using the
-        compact <code className={styles.inlineCode}>?q=</code> or legacy{' '}
-        <code className={styles.inlineCode}>?answers=</code> format, or retake the
-        assessment to generate a new plan.
-      </p>
-      <Link href="/intake" className={styles.errorLink}>
-        Take the Assessment →
-      </Link>
+    <div className={styles.page}>
+      <SiteHeader />
+      <main id="main" className={styles.errorState}>
+        <h1 className={styles.errorTitle}>This plan link is invalid or incomplete</h1>
+        <p className={styles.errorDesc}>
+          We could not load a plan from this link. It may have been cut off when it was copied.
+          Open the full link again, or answer the questions to make a new plan.
+        </p>
+        <Link href="/intake" className={styles.errorLink}>
+          Start the questions →
+        </Link>
+      </main>
+      <SiteFooter />
     </div>
   );
 }

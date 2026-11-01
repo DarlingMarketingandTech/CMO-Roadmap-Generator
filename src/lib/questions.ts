@@ -27,15 +27,26 @@ export const QUESTIONS: Question[] = [
   },
   {
     id: 'businessStage',
-    label: 'What stage is your business at?',
-    description: 'This helps us calibrate the complexity and pace of your roadmap.',
+    label: 'Where is your business today?',
+    description: 'Pick the one that sounds most like you. It sets how much groundwork the plan starts with.',
     type: 'single',
     options: [
-      { value: 'pre-launch', label: 'Pre-Launch', description: 'Not yet live — building toward launch' },
-      { value: 'early', label: 'Early Stage', description: '0–2 years old, under $1M ARR or equivalent' },
-      { value: 'growth', label: 'Growth Stage', description: '2–5 years, $1M–$10M ARR, scaling fast' },
-      { value: 'established', label: 'Established', description: '$10M+ ARR or 5+ years in business' },
-      { value: 'enterprise', label: 'Enterprise', description: 'Large organization with complex structure' },
+      { value: 'pre-launch', label: 'Getting ready to open', description: 'Not taking customers yet' },
+      {
+        value: 'early',
+        label: 'Just getting started',
+        description: 'Open, with a handful of customers; still learning what brings them in',
+      },
+      {
+        value: 'growth',
+        label: 'Steady and ready to grow',
+        description: 'Regular customers coming in; you want more of them',
+      },
+      {
+        value: 'established',
+        label: 'Well established',
+        description: 'Known in your market; you want to protect and sharpen what works',
+      },
     ],
   },
   {

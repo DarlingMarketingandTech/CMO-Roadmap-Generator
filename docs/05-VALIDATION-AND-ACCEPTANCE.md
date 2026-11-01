@@ -277,3 +277,26 @@ The destination order is `STRATEGY_BOOKING_URL`, then `NEXT_PUBLIC_BOOKING_URL`,
 | Clinic, manual-workflow, saas-reporting, local-visibility, and law-differentiation on local `next start` port 3459 | The visible buttons were "Discuss your page note," "Discuss your inquiry list," "Discuss your measurement baseline," "Discuss your page note," and "Book a strategy conversation." Each href was the configured https booking URL, with no query, no `body`, and no example.com host. Local SEO, the lead-engine workshop, and the attribution service path stayed in place. Law-differentiation had no starting-action block. The no-channel task still asks for the desired customer action. | Desktop browser. The booking URL is not copied into this record. Not a print pass. |
 | Rendered email for those five plans | The button label and href matched the page. The href did not include the task text, the name "Alex Example," or the company. | `@react-email/render` in a local script and in the unit tests. Not a provider send. |
 | Clinic results on local `next start` port 3460 with the three contact variables set empty | The page showed "A conversation link is not configured." There was no contact link, no mailto, and no example.com href. The starting action and Local SEO service path remained. | One desktop page. The empty values were process environment for that server only. `.env.local` was not edited. |
+
+## CMO-007 website readiness
+
+Branch `cmo-007-website-readiness`, created from `main` at `e1089f8` on November 1, 2026. Not pushed or deployed. No live email was sent. The final commit hash is recorded in docs/10-SESSION-HANDOFF.md.
+
+Commits: `8cc149f` stubs and contact default, `54707ab` email handler and full-plan email, `0ebc3ec` short-version gate (D18), `8cab330` stage question (D17), `e622f33` rebrand and link back, then this documentation commit.
+
+Checks on the final code: `npx tsc --noEmit --incremental false` passes. `npm test` passes 44 of 44 across 8 suites. `npm run build` compiles and generates 8 static pages.
+
+What the tests prove:
+
+- `send-roadmap.test.ts`, through a fake transport: the visitor receives the full plan (every scheduled module title, "Why this plan", "Request a consult" linking to the website contact page, no example.com). The owner copy goes to `LEAD_NOTIFY_EMAIL` with reply-to set to the visitor. No copy is sent when that setting is unset. A provider failure returns 502 and skips the copy. A failed copy still returns 200 to the visitor. A missing configuration returns 503 without naming the setting. A filled honeypot sends nothing.
+- `roadmap-preview.test.ts`: for all 12 demos, the preview object passed to the browser contains no module description, outcome, service description, engagement text, reasoning, or watch-out.
+- `stage-question.test.ts`: the stage copy has no "$", "ARR", "revenue", or "enterprise". Compact indexes 0–3 are unchanged. Old index 4 and legacy `enterprise` decode as `established` and re-encode with index 3. Index 5 is rejected. The CMO-007 baseline hash is pinned.
+- The CMO-003/004/005 fixture comparisons pass after applying only the D17 label rename, so scores, order, phases, services, and engagement are unchanged for all 12 demos.
+
+Browser check (production build on localhost, Playwright, Chromium): intake at 1280 px and 375 px, the stage question at 375 px, clinic results at 1280 px, saas-reporting results at 375 px, print media at 1280 px, and an invalid link at 375 px (HTTP 404). No horizontal overflow at 375 px. Two defects found and fixed in the browser pass: optional-field labels wrapped and misaligned the form, and the skip link showed over content in print and full-page captures. The served HTML for the clinic plan contains no outcomes, "Expected outcomes", watch-outs, "example.com", or "RESEND".
+
+Contrast (computed from the brand tokens): crimson on cream ≈ 7.6:1, muted on cream ≈ 6.7:1, white on crimson ≈ 8.9:1, ink on cream and cream on ink ≈ 15:1. All pass WCAG AA for body text.
+
+Not verified: real Resend delivery and the owner copy in a real inbox; the email's rendering in mail clients (it was rendered to HTML but not viewed in a client); keyboard-only and screen-reader passes beyond the accessibility tree; the deployed site; the website contact page accepting the visitor. The main website is still on HOLD at its Vercel address.
+
+Final verification: commit `e0f29222a96575c125f35fb05146cbd8aa3c054c` with a clean tree (only the untracked `.claude/` folder). `npx tsc --noEmit --incremental false` passed. `npm test`: 44 tests, 8 suites, 44 pass, 0 fail. `npm run build`: compiled successfully, 8 of 8 static pages generated. The commit that adds this paragraph changes documentation only.

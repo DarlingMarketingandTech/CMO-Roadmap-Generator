@@ -1,27 +1,26 @@
 import type { Metadata } from 'next';
-import { Inter, Instrument_Serif } from 'next/font/google';
+import { Inter, Montserrat } from 'next/font/google';
 import './globals.css';
 
-const inter = Inter({
+const display = Montserrat({
+  subsets: ['latin'],
+  weight: ['700', '800'],
+  variable: '--font-montserrat',
+  display: 'swap',
+});
+
+const body = Inter({
   subsets: ['latin'],
   variable: '--font-inter',
   display: 'swap',
 });
 
-const instrumentSerif = Instrument_Serif({
-  weight: '400',
-  style: 'italic',
-  subsets: ['latin'],
-  variable: '--font-instrument',
-  display: 'swap',
-});
-
 export const metadata: Metadata = {
-  title: '90-Day Marketing Roadmap | Darling MarTech',
+  title: '90-Day Marketing Plan | Darling MarTech',
   description:
-    'Answer 7 questions and get a personalized, phased 90-day marketing roadmap tailored to your business stage, goals, and team capacity.',
+    'Answer 7 quick questions about your business and get a 90-day marketing plan: where to start, what matters most, and the order to tackle it.',
   icons: {
-    icon: '/images/logo/dm-monogram.svg',
+    icon: '/brand/logo-monogram.png',
   },
 };
 
@@ -31,8 +30,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
-      <body className={inter.className}>{children}</body>
+    <html lang="en" className={`${display.variable} ${body.variable}`}>
+      <body>
+        <a className="skip-link" href="#main">
+          Skip to content
+        </a>
+        {children}
+      </body>
     </html>
   );
 }

@@ -61,11 +61,15 @@ Acceptance: five representative scenarios each have one clear next action, reaso
 
 Status on October 24, 2026: active results and email contact links no longer fall back to strategy@example.com. A missing or example destination says the conversation link is not configured. The two stub intents still say details are noted, and that claim is still open.
 
+Status on November 1, 2026: implemented locally on `cmo-007-website-readiness` (not pushed or deployed). The stub intents are removed. The contact link always reaches the approved website contact page unless a booking or email override is set. A missing Resend setting returns "temporarily unavailable" without naming the setting. Verified by `npm test` (44 pass), typecheck and build. See the CMO-007 validation record.
+
 Remove or explicitly disable stub intents until they are implemented. Centralize approved booking/contact destinations; remove example mailto behavior from a release build.
 
 Acceptance: no request path says saved/noted without persistence; no browser or email link routes to strategy@example.com; environment failures use user-friendly copy without revealing setup instructions.
 
 ### CMO-008 / P1 / Reliable summary delivery with a full plan link
+
+Note on November 1, 2026: D18 makes the email the full plan, so the "full plan link" goal is replaced by full content in the email. Fake-transport tests now cover accepted and rejected sends, the lead copy, the honeypot, and safe configuration errors. Timeouts and thrown provider calls are still open.
 
 Add canonical results URL/version context to the email model, provider adapter and complete error boundary. Distinguish accepted, failed and unknown outcomes.
 

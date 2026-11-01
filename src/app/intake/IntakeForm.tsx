@@ -9,7 +9,8 @@ import type { IntakeAnswers } from '@/lib/types';
 import { getDemoProfileById } from '@/lib/demo-profiles';
 import { encodeIntakeAnswersCompact } from '@/lib/encode-answers';
 import { canonicalizeIntakeAnswers } from '@/lib/intake-schema';
-import BrandWordmark from '@/components/brand/BrandWordmark';
+import SiteFooter from '@/components/brand/SiteFooter';
+import SiteHeader from '@/components/brand/SiteHeader';
 import styles from './page.module.css';
 
 const defaultAnswers: Partial<IntakeAnswers> = {
@@ -121,18 +122,19 @@ export default function IntakeForm() {
 
   return (
     <div className={styles.pageWrapper}>
-      <header className={styles.header}>
-        <BrandWordmark size="compact" />
-        <span className={styles.headerStep}>
-          {currentStep + 1} / {QUESTIONS.length}
-        </span>
-      </header>
+      <SiteHeader
+        aside={
+          <span className={styles.headerStep}>
+            {currentStep + 1} / {QUESTIONS.length}
+          </span>
+        }
+      />
 
-      <div className={styles.progressTrack}>
+      <div className={styles.progressTrack} aria-hidden="true">
         <div className={styles.progressFill} style={{ width: `${progress}%` }} />
       </div>
 
-      <main className={styles.main}>
+      <main id="main" className={styles.main}>
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={currentStep}
@@ -218,10 +220,11 @@ export default function IntakeForm() {
             onClick={handleNext}
             className={isLast ? styles.submitButton : styles.nextButton}
           >
-            {isLast ? 'Generate My Roadmap →' : 'Next →'}
+            {isLast ? 'See my plan →' : 'Next →'}
           </button>
         </div>
       </main>
+      <SiteFooter />
     </div>
   );
 }

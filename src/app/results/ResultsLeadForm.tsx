@@ -1,29 +1,31 @@
 'use client';
 
 import { useState, type FormEvent } from 'react';
-import { CONTACT_UNAVAILABLE_MESSAGE, type ContactConversation } from '@/lib/contact-cta';
+import type { ContactConversation } from '@/lib/contact-cta';
 import styles from './page.module.css';
-
-type Intent = 'email-roadmap' | 'full-version' | 'book-call';
-
-const STUB_NOTE =
-  'This option is not wired to email yet — use “Send my roadmap” for delivery, or book via the strategy CTA below.';
 
 interface ResultsLeadFormProps {
   /** Compact or legacy token so the API can recompute the same roadmap server-side. */
   roadmapToken: string;
   contact: ContactConversation;
+  /** Recommended work streams in the full plan. */
+  moduleCount: number;
+  /** True when Darling MarTech receives a copy of each request. */
+  ownerGetsCopy: boolean;
 }
 
-export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFormProps) {
+export default function ResultsLeadForm({
+  roadmapToken,
+  contact,
+  moduleCount,
+  ownerGetsCopy,
+}: ResultsLeadFormProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
   const [honeypot, setHoneypot] = useState('');
-  const [intent, setIntent] = useState<Intent>('email-roadmap');
   const [status, setStatus] = useState<'idle' | 'sending' | 'success' | 'error'>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [stubMessage, setStubMessage] = useState<string | null>(null);
 
   async function sendRoadmapEmail(e: FormEvent) {
     e.preventDefault();
@@ -60,41 +62,24 @@ export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFo
     }
   }
 
-  function handleStubSubmit(e: FormEvent) {
-    e.preventDefault();
-    if (!email.trim()) return;
-    console.info(STUB_NOTE, { intent, name, email, company });
-    setStubMessage(
-      'Thanks — your details are noted. This path is not automated yet; use “Send my roadmap” for instant email delivery, or the strategy CTA below.',
-    );
-  }
-
   if (status === 'success') {
     return (
       <section className={styles.leadSection} aria-labelledby="lead-heading">
-        <span className={styles.sectionTag}>Delivered</span>
+        <span className={styles.sectionTag}>Sent</span>
         <h2 id="lead-heading" className={styles.sectionTitle}>
-          Check your inbox
+          Your plan is on its way
         </h2>
         <div className={styles.leadSuccessPanel} role="status">
           <p className={styles.leadSuccessText}>
-            We sent your roadmap summary to <strong>{email.trim()}</strong>. If it does not arrive in
-            a few minutes, check spam or promotions — then reply to that message so we know it
-            reached you.
+            Our email service accepted your full plan for <strong>{email.trim()}</strong>. It
+            usually arrives within a few minutes. If it does not, check your spam or promotions
+            folder.
           </p>
-          <p className={styles.leadSuccessSub}>Best next step</p>
-          {contact.href ? (
-            <a href={contact.href} className={styles.leadSuccessCta}>
-              {contact.label}
-            </a>
-          ) : (
-            <p className={styles.leadSuccessBookSub}>{CONTACT_UNAVAILABLE_MESSAGE}</p>
-          )}
+          <p className={styles.leadSuccessSub}>Want to talk it through?</p>
+          <a href={contact.href} className={styles.leadSuccessCta}>
+            {contact.label}
+          </a>
           <p className={styles.leadSuccessBookSub}>{contact.purpose}</p>
-          <p className={styles.leadSuccessHint}>
-            You can also use <strong>Copy share link</strong> above to send the full on-page roadmap
-            to a colleague.
-          </p>
         </div>
       </section>
     );
@@ -102,19 +87,26 @@ export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFo
 
   return (
     <section className={styles.leadSection} aria-labelledby="lead-heading">
-      <span className={styles.sectionTag}>Stay in touch</span>
+      <span className={styles.sectionTag}>Full plan</span>
       <h2 id="lead-heading" className={styles.sectionTitle}>
-        Get this roadmap in your inbox
+        Get your full plan by email
       </h2>
-      <p className={styles.leadIntro}>
-        Enter your details and we will email a branded summary: priorities, phases, services, and
-        engagement path — built from the same deterministic output you see on this page.
+      <p className={styles.leadIntro}>The full plan adds:</p>
+      <ul className={styles.leadIncludes}>
+        <li>
+          All {moduleCount} recommended {moduleCount === 1 ? 'area' : 'areas'} of work, placed in
+          three 30-day phases
+        </li>
+        <li>What each one involves and what done looks like</li>
+        <li>Why the plan fits your answers, the services that match, and common mistakes to avoid</li>
+      </ul>
+      <p className={styles.leadPrivacy}>
+        {ownerGetsCopy
+          ? 'Darling MarTech also receives a copy of your request and answers so we can follow up if you want help.'
+          : 'Your email address is only used to send the plan.'}
       </p>
 
-      <form
-        className={styles.leadForm}
-        onSubmit={intent === 'email-roadmap' ? sendRoadmapEmail : handleStubSubmit}
-      >
+      <form className={styles.leadForm} onSubmit={sendRoadmapEmail}>
         {/* Honeypot — leave hidden; bots often fill it. */}
         <input
           type="text"
@@ -129,7 +121,9 @@ export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFo
 
         <div className={styles.leadFields}>
           <label className={styles.leadLabel}>
-            Name <span className={styles.leadOptional}>(optional)</span>
+            <span>
+              Name <span className={styles.leadOptional}>(optional)</span>
+            </span>
             <input
               className={styles.leadInput}
               name="name"
@@ -137,11 +131,10 @@ export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFo
               value={name}
               onChange={(e) => setName(e.target.value)}
               disabled={status === 'sending'}
-              placeholder="Alex Rivera"
             />
           </label>
           <label className={styles.leadLabel}>
-            Email
+            <span>Email</span>
             <input
               className={styles.leadInput}
               name="email"
@@ -151,11 +144,12 @@ export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFo
               onChange={(e) => setEmail(e.target.value)}
               required
               disabled={status === 'sending'}
-              placeholder="you@company.com"
             />
           </label>
           <label className={styles.leadLabel}>
-            Company <span className={styles.leadOptional}>(optional)</span>
+            <span>
+              Business name <span className={styles.leadOptional}>(optional)</span>
+            </span>
             <input
               className={styles.leadInput}
               name="company"
@@ -163,88 +157,18 @@ export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFo
               value={company}
               onChange={(e) => setCompany(e.target.value)}
               disabled={status === 'sending'}
-              placeholder="Acme Co."
             />
           </label>
         </div>
 
-        <fieldset className={styles.leadIntentFieldset}>
-          <legend className={styles.leadIntentLegend}>What would you like?</legend>
-          <div className={styles.leadIntentRow}>
-            <label className={styles.leadRadio}>
-              <input
-                type="radio"
-                name="intent"
-                checked={intent === 'email-roadmap'}
-                onChange={() => {
-                  setIntent('email-roadmap');
-                  setStubMessage(null);
-                }}
-                disabled={status === 'sending'}
-              />
-              Email me this roadmap
-            </label>
-            <label className={styles.leadRadio}>
-              <input
-                type="radio"
-                name="intent"
-                checked={intent === 'full-version'}
-                onChange={() => {
-                  setIntent('full-version');
-                  setStubMessage(null);
-                }}
-                disabled={status === 'sending'}
-              />
-              Get the full version
-            </label>
-            <label className={styles.leadRadio}>
-              <input
-                type="radio"
-                name="intent"
-                checked={intent === 'book-call'}
-                onChange={() => {
-                  setIntent('book-call');
-                  setStubMessage(null);
-                }}
-                disabled={status === 'sending'}
-              />
-              Book a strategy conversation
-            </label>
-          </div>
-        </fieldset>
-
-        <button
-          type="submit"
-          className={styles.leadSubmit}
-          disabled={status === 'sending'}
-        >
-          {status === 'sending' && 'Sending…'}
-          {status !== 'sending' && intent === 'email-roadmap' && 'Send my roadmap'}
-          {status !== 'sending' && intent === 'full-version' && 'Request the full version'}
-          {status !== 'sending' && intent === 'book-call' && 'Request a strategy call'}
+        <button type="submit" className={styles.leadSubmit} disabled={status === 'sending'}>
+          {status === 'sending' ? 'Sending…' : 'Email my plan'}
         </button>
       </form>
-
-      {stubMessage && (
-        <p className={styles.leadStubNote} role="status">
-          {stubMessage}
-        </p>
-      )}
 
       {status === 'error' && errorMessage && (
         <p className={styles.leadError} role="alert">
           {errorMessage}
-        </p>
-      )}
-
-      {intent !== 'email-roadmap' && (
-        <p className={styles.leadIntegrationHint}>{STUB_NOTE}</p>
-      )}
-
-      {intent === 'email-roadmap' && (
-        <p className={styles.leadIntegrationHint}>
-          Requires <code className={styles.toolbarCode}>RESEND_API_KEY</code> and{' '}
-          <code className={styles.toolbarCode}>RESEND_FROM</code> in production. See README.
         </p>
       )}
     </section>

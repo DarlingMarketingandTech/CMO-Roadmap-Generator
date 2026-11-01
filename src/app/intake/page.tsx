@@ -1,15 +1,13 @@
 import { Suspense } from 'react';
-import BrandWordmark from '@/components/brand/BrandWordmark';
+import SiteHeader from '@/components/brand/SiteHeader';
 import IntakeForm from './IntakeForm';
 import styles from './page.module.css';
 
 function IntakeFallback() {
   return (
     <div className={styles.pageWrapper}>
-      <header className={styles.header}>
-        <BrandWordmark size="compact" />
-      </header>
-      <main className={styles.main}>
+      <SiteHeader />
+      <main id="main" className={styles.main}>
         <p className={`${styles.questionDesc} ${styles.centerText}`}>
           Loading assessment…
         </p>

@@ -1,3 +1,4 @@
+import { SERVICE_PATH_NOTE } from '../rules';
 import type { Roadmap } from '../types';
 import { PHASE_WINDOW_NOTE, schedulePhaseViews } from '../schedule-presentation';
 import { startingActionForRoadmap } from '../starting-action';
@@ -8,10 +9,19 @@ export interface RoadmapEmailPhaseSummary {
   phaseTitle: string;
   days: string;
   moduleTitles: string[];
+  modules: RoadmapEmailModule[];
   emptyMessage: string | null;
 }
 
-/** The page also lists later program outcomes. This email view does not. */
+/** Full module detail: the email is now the only place the whole plan is sent. */
+export interface RoadmapEmailModule {
+  title: string;
+  description: string;
+  effortText: string;
+  outcomesLabel: string;
+  outcomes: string[];
+}
+
 export interface RoadmapEmailStartingAction {
   moduleTitle: string;
   task: string;
@@ -27,10 +37,17 @@ export interface RoadmapEmailStartingAction {
 export interface RoadmapEmailModel {
   recipientFirstName: string;
   companyLine: string | null;
+  businessHeadline: string;
+  executiveSummary: string;
   startingAction: RoadmapEmailStartingAction | null;
   topPriorities: string[];
   sequencingNote: string;
   phases: RoadmapEmailPhaseSummary[];
+  whyThisRoadmap: string;
+  whyBullets: string[];
+  influentialAnswers: { question: string; answer: string; impact: string }[];
+  watchOuts: string[];
+  servicePathNote: string;
   primaryServiceTitle: string;
   primaryServiceBlurb: string;
   secondaryServiceTitle: string;
@@ -38,14 +55,11 @@ export interface RoadmapEmailModel {
   engagementPathTitle: string;
   engagementPathRationale: string;
   sprintTitle: string;
+  sprintDescription: string;
 }
 
-const MAX_BLURB = 240;
-
-function truncateBlurb(text: string): string {
-  const t = text.replace(/\s+/g, ' ').trim();
-  if (t.length <= MAX_BLURB) return t;
-  return `${t.slice(0, MAX_BLURB - 1).trimEnd()}…`;
+function capitalize(text: string): string {
+  return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 /**
@@ -63,12 +77,26 @@ export function roadmapToEmailModel(
     phaseTitle: phase.title,
     days: phase.days,
     moduleTitles: phase.modules.map((mod) => mod.title),
+    modules: phase.modules.map((mod) => {
+      const isStarting = starting?.moduleId === mod.id;
+      return {
+        title: mod.title,
+        description: mod.description,
+        effortText: isStarting
+          ? `${starting.effortLabel}: ${capitalize(mod.effort)}`
+          : `${capitalize(mod.effort)} effort`,
+        outcomesLabel: isStarting ? starting.laterProgramLabel : 'Expected outcomes',
+        outcomes: mod.outcomes,
+      };
+    }),
     emptyMessage: phase.emptyMessage,
   }));
 
   return {
     recipientFirstName: first,
     companyLine: company?.trim() ? company.trim() : null,
+    businessHeadline: roadmap.businessSummary.headline,
+    executiveSummary: roadmap.executiveSummary,
     startingAction: starting
       ? {
           moduleTitle: starting.moduleTitle,
@@ -87,18 +115,28 @@ export function roadmapToEmailModel(
               ].join(' ')
             : null,
           effortLabel: starting.effortLabel,
-          effortBand: starting.effort.charAt(0).toUpperCase() + starting.effort.slice(1),
+          effortBand: capitalize(starting.effort),
         }
       : null,
     topPriorities: roadmap.topPriorities,
     sequencingNote: PHASE_WINDOW_NOTE,
     phases,
+    whyThisRoadmap: roadmap.whyThisRoadmap,
+    whyBullets: roadmap.explainability.whySummaryBullets,
+    influentialAnswers: roadmap.explainability.influentialAnswers.map((row) => ({
+      question: row.questionLabel,
+      answer: row.answerLabel,
+      impact: row.impact,
+    })),
+    watchOuts: roadmap.watchOuts,
+    servicePathNote: SERVICE_PATH_NOTE,
     primaryServiceTitle: roadmap.primaryService.title,
-    primaryServiceBlurb: truncateBlurb(roadmap.primaryService.description),
+    primaryServiceBlurb: roadmap.primaryService.description,
     secondaryServiceTitle: roadmap.secondaryService.title,
-    secondaryServiceBlurb: truncateBlurb(roadmap.secondaryService.description),
+    secondaryServiceBlurb: roadmap.secondaryService.description,
     engagementPathTitle: roadmap.engagementFormat.title,
-    engagementPathRationale: truncateBlurb(roadmap.engagementFormat.rationale),
+    engagementPathRationale: roadmap.engagementFormat.rationale,
     sprintTitle: roadmap.recommendedEngagement.title,
+    sprintDescription: roadmap.recommendedEngagement.description,
   };
 }
