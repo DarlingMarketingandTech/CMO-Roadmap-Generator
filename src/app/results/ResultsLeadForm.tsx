@@ -121,7 +121,9 @@ export default function ResultsLeadForm({
 
         <div className={styles.leadFields}>
           <label className={styles.leadLabel}>
-            Name <span className={styles.leadOptional}>(optional)</span>
+            <span>
+              Name <span className={styles.leadOptional}>(optional)</span>
+            </span>
             <input
               className={styles.leadInput}
               name="name"
@@ -132,7 +134,7 @@ export default function ResultsLeadForm({
             />
           </label>
           <label className={styles.leadLabel}>
-            Email
+            <span>Email</span>
             <input
               className={styles.leadInput}
               name="email"
@@ -145,7 +147,9 @@ export default function ResultsLeadForm({
             />
           </label>
           <label className={styles.leadLabel}>
-            Business name <span className={styles.leadOptional}>(optional)</span>
+            <span>
+              Business name <span className={styles.leadOptional}>(optional)</span>
+            </span>
             <input
               className={styles.leadInput}
               name="company"
