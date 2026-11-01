@@ -8,9 +8,18 @@ interface ResultsLeadFormProps {
   /** Compact or legacy token so the API can recompute the same roadmap server-side. */
   roadmapToken: string;
   contact: ContactConversation;
+  /** Recommended work streams in the full plan. */
+  moduleCount: number;
+  /** True when Darling MarTech receives a copy of each request. */
+  ownerGetsCopy: boolean;
 }
 
-export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFormProps) {
+export default function ResultsLeadForm({
+  roadmapToken,
+  contact,
+  moduleCount,
+  ownerGetsCopy,
+}: ResultsLeadFormProps) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [company, setCompany] = useState('');
@@ -62,7 +71,7 @@ export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFo
         </h2>
         <div className={styles.leadSuccessPanel} role="status">
           <p className={styles.leadSuccessText}>
-            Our email service accepted your plan summary for <strong>{email.trim()}</strong>. It
+            Our email service accepted your full plan for <strong>{email.trim()}</strong>. It
             usually arrives within a few minutes. If it does not, check your spam or promotions
             folder.
           </p>
@@ -71,10 +80,6 @@ export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFo
             {contact.label}
           </a>
           <p className={styles.leadSuccessBookSub}>{contact.purpose}</p>
-          <p className={styles.leadSuccessHint}>
-            You can also use <strong>Copy share link</strong> above to send the full plan to a
-            colleague.
-          </p>
         </div>
       </section>
     );
@@ -82,13 +87,23 @@ export default function ResultsLeadForm({ roadmapToken, contact }: ResultsLeadFo
 
   return (
     <section className={styles.leadSection} aria-labelledby="lead-heading">
-      <span className={styles.sectionTag}>Keep a copy</span>
+      <span className={styles.sectionTag}>Full plan</span>
       <h2 id="lead-heading" className={styles.sectionTitle}>
-        Email my plan
+        Get your full plan by email
       </h2>
-      <p className={styles.leadIntro}>
-        We will email you a summary of this plan: your priorities, the order to tackle them, and the
-        suggested services. Your email address is only used to send it.
+      <p className={styles.leadIntro}>The full plan adds:</p>
+      <ul className={styles.leadIncludes}>
+        <li>
+          All {moduleCount} recommended {moduleCount === 1 ? 'area' : 'areas'} of work, placed in
+          three 30-day phases
+        </li>
+        <li>What each one involves and what done looks like</li>
+        <li>Why the plan fits your answers, the services that match, and common mistakes to avoid</li>
+      </ul>
+      <p className={styles.leadPrivacy}>
+        {ownerGetsCopy
+          ? 'Darling MarTech also receives a copy of your request and answers so we can follow up if you want help.'
+          : 'Your email address is only used to send the plan.'}
       </p>
 
       <form className={styles.leadForm} onSubmit={sendRoadmapEmail}>

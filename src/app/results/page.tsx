@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import { composeRoadmap } from '@/lib/compose-roadmap';
 import { contactForRoadmap } from '@/lib/contact-cta';
 import { parseIntakeAnswersFromResultsParams } from '@/lib/encode-answers';
+import { roadmapPreview } from '@/lib/roadmap-preview';
 import ResultsDisplay from './ResultsDisplay';
 
 interface ResultsPageProps {
@@ -21,5 +22,13 @@ export default async function ResultsPage({ searchParams }: ResultsPageProps) {
   const roadmap = composeRoadmap(parsed.answers);
   const contact = contactForRoadmap(roadmap);
 
-  return <ResultsDisplay roadmap={roadmap} roadmapToken={parsed.token} contact={contact} />;
+  // D18: only the short version crosses to the client. The full plan is sent by email.
+  return (
+    <ResultsDisplay
+      preview={roadmapPreview(roadmap)}
+      roadmapToken={parsed.token}
+      contact={contact}
+      ownerGetsCopy={Boolean(process.env.LEAD_NOTIFY_EMAIL?.trim())}
+    />
+  );
 }

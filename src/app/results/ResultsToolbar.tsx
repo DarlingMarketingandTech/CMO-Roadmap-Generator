@@ -1,20 +1,18 @@
 'use client';
 
 import { useCallback, useState } from 'react';
-import type { IntakeAnswers } from '@/lib/types';
-import { encodeIntakeAnswersCompact } from '@/lib/encode-answers';
 import styles from './page.module.css';
 
 interface ResultsToolbarProps {
-  answers: IntakeAnswers;
+  /** Canonical compact token for these answers. */
+  roadmapToken: string;
 }
 
-export default function ResultsToolbar({ answers }: ResultsToolbarProps) {
+export default function ResultsToolbar({ roadmapToken }: ResultsToolbarProps) {
   const [copied, setCopied] = useState(false);
 
   const copyShareLink = useCallback(() => {
-    const q = encodeURIComponent(encodeIntakeAnswersCompact(answers));
-    const url = `${window.location.origin}/results?q=${q}`;
+    const url = `${window.location.origin}/results?q=${encodeURIComponent(roadmapToken)}`;
     void navigator.clipboard.writeText(url).then(
       () => {
         setCopied(true);
@@ -24,23 +22,16 @@ export default function ResultsToolbar({ answers }: ResultsToolbarProps) {
         window.prompt('Copy this share link:', url);
       },
     );
-  }, [answers]);
+  }, [roadmapToken]);
 
   return (
     <div className={styles.resultsToolbar}>
       <div className={styles.toolbarActions}>
-        <button type="button" className={styles.toolbarButton} onClick={() => window.print()}>
-          Save PDF / Print
-        </button>
         <button type="button" className={styles.toolbarButtonSecondary} onClick={copyShareLink}>
           {copied ? 'Link copied' : 'Copy share link'}
         </button>
       </div>
-      <span className={styles.toolbarHint}>
-        Share links use a compact <code className={styles.toolbarCode}>?q=</code> code (no database).
-        Recipients see the same roadmap. Legacy <code className={styles.toolbarCode}>?answers=</code>{' '}
-        URLs still work.
-      </span>
+      <span className={styles.toolbarHint}>Anyone with the link sees this summary.</span>
     </div>
   );
 }
